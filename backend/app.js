@@ -1,12 +1,33 @@
+require("dotenv").config({ quiet: true });
+
 const express = require("express");
-const bodyParser = require("body-parser");
+const connectDatabase = require("./database/db");
+const routes = require("./routes/route");
+const errorHandler = require("./middleware/error.middleware");
+
 const app = express();
 
-app.use(bodyParser.json());
+app.use(express.json());
 
-// database connection
-const db = require("./database/db");
+app.use(routes);
+app.use(errorHandler);
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-});
+const port = process.env.PORT || 3000;
+
+async function startServer() {
+  try {
+    await connectDatabase();
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  } catch (error) {
+    console.error("Unable to start server:", error.message);
+    process.exit(1);
+  }
+}
+
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = app;
