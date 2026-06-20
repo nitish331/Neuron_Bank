@@ -1,9 +1,5 @@
 const express = require("express");
-const { registerCustomer } = require("../controllers/customerAuth.controller");
-const {
-  customerRegistrationValidation,
-  handleValidationErrors,
-} = require("../middleware/customerAuth.validation");
+const authRoutes = require("./auth.route");
 
 const router = express.Router();
 
@@ -14,11 +10,6 @@ router.get("/", (req, res) => {
   });
 });
 
-router.post(
-  "/register",
-  customerRegistrationValidation,
-  handleValidationErrors,
-  registerCustomer,
-);
+router.use(authRoutes);
 
 module.exports = router;
