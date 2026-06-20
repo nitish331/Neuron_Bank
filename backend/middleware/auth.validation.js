@@ -1,6 +1,30 @@
 const { body, validationResult } = require("express-validator");
+const { getRefreshToken } = require("../utils/jwt.utils");
 
-const customerRegistrationValidation = [
+function emailValidation() {
+  return body("email")
+    .isString()
+    .withMessage("Email must be text")
+    .bail()
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .bail()
+    .isEmail()
+    .withMessage("Please provide a valid email")
+    .normalizeEmail();
+}
+
+function passwordValidation() {
+  return body("password")
+    .isString()
+    .withMessage("Password must be text")
+    .bail()
+    .notEmpty()
+    .withMessage("Password is required");
+}
+
+const registerValidation = [
   body("name")
     .isString()
     .withMessage("Name must be text")
@@ -11,17 +35,7 @@ const customerRegistrationValidation = [
     .bail()
     .isLength({ min: 2, max: 100 })
     .withMessage("Name must be between 2 and 100 characters"),
-  body("email")
-    .isString()
-    .withMessage("Email must be text")
-    .bail()
-    .trim()
-    .notEmpty()
-    .withMessage("Email is required")
-    .bail()
-    .isEmail()
-    .withMessage("Please provide a valid email")
-    .normalizeEmail(),
+  emailValidation(),
   body("phoneNumber")
     .isString()
     .withMessage("Phone number must be text")
@@ -32,7 +46,7 @@ const customerRegistrationValidation = [
     .bail()
     .matches(/^\+?[1-9]\d{9,14}$/)
     .withMessage(
-      "Phone number must contain 10 to 15 digits and may start with +",
+      "Phone number must contain 10 to 15 digits and may start with +"
     ),
   body("dateOfBirth")
     .notEmpty()
@@ -49,13 +63,7 @@ const customerRegistrationValidation = [
       return true;
     })
     .toDate(),
-  body("password")
-    .isString()
-    .withMessage("Password must be text")
-    .bail()
-    .notEmpty()
-    .withMessage("Password is required")
-    .bail()
+  passwordValidation()
     .isStrongPassword({
       minLength: 8,
       minLowercase: 1,
@@ -64,11 +72,25 @@ const customerRegistrationValidation = [
       minSymbols: 1,
     })
     .withMessage(
-      "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol",
+      "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol"
     )
     .bail()
     .isLength({ max: 128 })
     .withMessage("Password must not exceed 128 characters"),
+];
+
+const loginValidation = [emailValidation(), passwordValidation()];
+
+const refreshTokenValidation = [
+  body("refreshToken").custom((value, { req }) => {
+    if (!getRefreshToken(req)) {
+      throw new Error(
+        "Refresh token is required in the request body or Authorization header"
+      );
+    }
+
+    return true;
+  }),
 ];
 
 function handleValidationErrors(req, res, next) {
@@ -89,6 +111,8 @@ function handleValidationErrors(req, res, next) {
 }
 
 module.exports = {
-  customerRegistrationValidation,
+  registerValidation,
+  loginValidation,
+  refreshTokenValidation,
   handleValidationErrors,
 };
