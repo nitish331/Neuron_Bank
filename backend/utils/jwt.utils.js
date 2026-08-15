@@ -51,6 +51,19 @@ function createTokenPair(user) {
   };
 }
 
+function verifyAccessToken(accessToken) {
+  const payload = jwt.verify(
+    accessToken,
+    requireEnvironment("JWT_ACCESS_SECRET")
+  );
+
+  if (payload.tokenType !== "access") {
+    throw new Error("Invalid token type");
+  }
+
+  return payload;
+}
+
 function verifyRefreshToken(refreshToken) {
   const payload = jwt.verify(
     refreshToken,
@@ -82,6 +95,13 @@ function tokenHashMatches(token, storedHash) {
   );
 }
 
+function getBearerToken(req) {
+  const authorization = req.get("authorization");
+  const bearerMatch = authorization?.match(/^Bearer\s+(.+)$/i);
+
+  return bearerMatch ? bearerMatch[1].trim() : null;
+}
+
 function getRefreshToken(req) {
   if (
     typeof req.body?.refreshToken === "string" &&
@@ -90,21 +110,16 @@ function getRefreshToken(req) {
     return req.body.refreshToken.trim();
   }
 
-  const authorization = req.get("authorization");
-  const bearerMatch = authorization?.match(/^Bearer\s+(.+)$/i);
-
-  if (bearerMatch) {
-    return bearerMatch[1].trim();
-  }
-
-  return null;
+  return getBearerToken(req);
 }
 
 module.exports = {
   createAccessToken,
   createTokenPair,
+  getBearerToken,
   getRefreshToken,
   hashToken,
   tokenHashMatches,
+  verifyAccessToken,
   verifyRefreshToken,
 };
