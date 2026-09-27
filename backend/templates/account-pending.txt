@@ -1,0 +1,12 @@
+Account request received
+
+Hi {{ name }}, your account request has been successfully submitted. We will
+inform you once your account has been fully activated.
+
+Your account is currently pending review. You can sign in already, though
+transfers and other banking services stay locked until our team approves the
+account.
+
+Thanks for banking with us.
+
+Neuron Bank - This is an automated message, please do not reply.

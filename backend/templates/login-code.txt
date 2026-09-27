@@ -1,0 +1,13 @@
+Your login code
+
+Someone entered the correct password for your Neuron Bank account. Use the code
+below to finish signing in.
+
+    {{ code }}
+
+If this was not you, someone knows your password. Do not share this code, and
+change your password right away.
+
+This code expires in {{ expiresInMinutes }} minutes.
+
+Neuron Bank - This is an automated message, please do not reply.

@@ -1,0 +1,107 @@
+.stepper {
+  display: grid;
+  grid-template-columns: repeat(var(--stepper-count), minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stepperStep {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+/* Connector runs from the previous marker to this one, pinned to the marker's
+   vertical centre (half of the 38px marker). */
+.stepperTrack {
+  position: absolute;
+  top: 19px;
+  right: 50%;
+  left: -50%;
+  height: 2px;
+  margin-inline: 22px;
+  border-radius: var(--radius-pill);
+  background: var(--border-subtle);
+  transition: background var(--duration-slow) var(--ease-out);
+}
+
+/* A step being reached means the track leading into it is done. */
+.stepperStep.isComplete .stepperTrack,
+.stepperStep.isCurrent .stepperTrack {
+  background: var(--gradient-brand-soft);
+}
+
+.stepperMarker {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-raised);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  transition: transform var(--duration-base) var(--ease-out),
+    background var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.stepperStep.isCurrent .stepperMarker {
+  background: var(--gradient-brand);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.18);
+}
+
+.stepperStep.isComplete .stepperMarker {
+  background: rgba(124, 58, 237, 0.16);
+  border-color: rgba(168, 85, 247, 0.5);
+  color: var(--brand-violet);
+}
+
+/* Only completed steps are clickable; the rest are inert. */
+.stepperMarker:not(:disabled) {
+  cursor: pointer;
+}
+
+.stepperMarker:not(:disabled):hover {
+  transform: translateY(-2px);
+  border-color: rgba(168, 85, 247, 0.8);
+}
+
+.stepperMarker:disabled {
+  cursor: default;
+}
+
+.stepperLabel {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.stepperStep.isCurrent .stepperLabel {
+  color: var(--text-primary);
+}
+
+.stepperStep.isComplete .stepperLabel {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 420px) {
+  .stepperLabel {
+    font-size: 0.68rem;
+  }
+
+  .stepperTrack {
+    margin-inline: 20px;
+  }
+}

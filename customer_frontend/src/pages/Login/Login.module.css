@@ -1,0 +1,411 @@
+/* The page owns the viewport exactly — no scrollbar. Internal spacing is
+   viewport-relative so the card keeps fitting as the window shortens. */
+.login {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  padding: clamp(var(--space-3), 2.2vh, var(--space-6)) var(--container-gutter);
+  background-color: var(--surface-base);
+}
+
+.loginBackdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: url('../../assets/images/login-background.png');
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: cover;
+}
+
+/* Darkens the skyline just enough for the card and copy to hold contrast. */
+.loginGlow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(32% 42% at 50% 50%, rgba(124, 58, 237, 0.26) 0%, transparent 72%),
+    linear-gradient(180deg, rgba(5, 6, 15, 0.72) 0%, rgba(5, 6, 15, 0.3) 45%, rgba(5, 6, 15, 0.55) 100%);
+}
+
+/* ---------- Corner rails ---------- */
+.loginRail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.loginRailBottom {
+  align-items: flex-end;
+}
+
+.loginTrust,
+.loginMotto {
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+}
+
+.loginTrust {
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--brand-violet);
+}
+
+.loginMotto {
+  padding-right: var(--space-3);
+  border-right: 2px solid var(--brand-violet);
+  text-align: right;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ---------- Stage ----------
+   Three tracks keep the card optically centred on the page while the pitch
+   copy occupies the left one. `min-height: 0` lets it shrink inside the
+   fixed-height page instead of pushing the footer off-screen. */
+.loginStage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(var(--space-5), 4vw, var(--space-8));
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-block: clamp(var(--space-3), 2vh, var(--space-5));
+}
+
+.loginPitch {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+  max-width: 26rem;
+}
+
+.loginHeadline {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3.2vw, 3rem);
+  font-weight: var(--weight-regular);
+  line-height: 1.22;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.loginRule {
+  width: 40px;
+  height: 2px;
+  background: var(--brand-violet);
+}
+
+.loginPitchText {
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+  line-height: 1.7;
+}
+
+/* ---------- Card ---------- */
+.loginCard {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(var(--space-3), 2.2vh, var(--space-5));
+  width: min(100%, 32rem);
+  max-height: 100%;
+  overflow-y: auto;
+  padding: clamp(var(--space-4), 3.4vh, var(--space-7)) clamp(var(--space-4), 2.5vw, var(--space-7));
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-default);
+  background: linear-gradient(180deg, rgba(18, 20, 46, 0.72) 0%, rgba(8, 9, 22, 0.78) 100%);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: var(--shadow-lg);
+}
+
+.loginCardLogo {
+  margin-inline: auto;
+}
+
+.loginCardHead {
+  text-align: center;
+}
+
+.loginCardHead h2 {
+  font-size: clamp(var(--text-2xl), 3vw, var(--text-3xl));
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.loginCardHead p {
+  max-width: 24rem;
+  margin: var(--space-2) auto 0;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.loginNotice {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  background: rgba(139, 92, 246, 0.12);
+  color: #c4b5fd;
+  font-size: var(--text-sm);
+}
+
+.loginFormError {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.1);
+  color: #fca5a5;
+  font-size: var(--text-sm);
+}
+
+/* ---------- Form ---------- */
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(var(--space-3), 1.8vh, var(--space-4));
+}
+
+/* The reset link shares the row with the field's own label. */
+.loginFormPassword {
+  position: relative;
+}
+
+.loginFormForgot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: var(--brand-violet);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.loginFormForgot:hover {
+  text-decoration: underline;
+}
+
+.loginFormNote {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+}
+
+.loginFormSubmit {
+  width: 100%;
+  margin-top: var(--space-2);
+}
+
+.loginFormActions {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3);
+}
+
+/* Caption between two hairlines — flex rather than a background knockout, so
+   it sits correctly on the card's gradient. */
+.loginFormDivider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.loginFormDivider::before,
+.loginFormDivider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.loginFormDivider span {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+.loginFormCreate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  color: var(--brand-violet);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+}
+
+.loginFormCreate svg {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.loginFormCreate:hover svg {
+  transform: translateX(3px);
+}
+
+/* ---------- Verify step ---------- */
+.loginVerify {
+  text-align: center;
+}
+
+.loginVerifyBadge {
+  display: inline-grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: var(--space-4);
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.16);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  color: var(--brand-violet);
+  font-size: 1.6rem;
+}
+
+.loginVerifyTitle {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+}
+
+.loginVerifyText {
+  margin-top: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.loginVerifyText strong {
+  color: var(--text-primary);
+}
+
+/* Wide tracking so the code reads as discrete digits. */
+.loginVerifyInput {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  letter-spacing: 0.6em;
+  text-indent: 0.6em;
+}
+
+.loginVerifyResend {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+.loginVerifyResend button {
+  color: var(--brand-violet);
+  font: inherit;
+  font-weight: var(--weight-medium);
+}
+
+.loginVerifyResend button:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.loginVerifyResend button:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* ---------- Signed in ---------- */
+.loginDone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding-block: var(--space-6);
+  text-align: center;
+}
+
+.loginDoneBadge {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(52, 211, 153, 0.14);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  color: #6ee7b7;
+  font-size: 2rem;
+}
+
+.loginDone h2 {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+}
+
+.loginDone p {
+  max-width: 26rem;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.loginDoneAction {
+  color: var(--brand-violet);
+  font: inherit;
+  font-weight: var(--weight-semibold);
+}
+
+.loginDoneAction:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Responsive ---------- */
+
+/* Stacking the pitch under the card breaks the one-screen budget, so the page
+   goes back to being a normal scrolling document here. */
+@media (max-width: 1080px) {
+  .login {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .loginCard {
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .loginStage {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: var(--space-6);
+  }
+
+  /* The form leads on narrow screens; the pitch copy follows it. */
+  .loginPitch {
+    order: 2;
+    align-items: center;
+    max-width: 34rem;
+    text-align: center;
+  }
+
+  .loginRule {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .loginRail {
+    justify-content: center;
+  }
+
+  .loginMotto {
+    display: none;
+  }
+
+  .loginTrust {
+    margin-inline: auto;
+  }
+
+  .loginFormActions {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,28 @@
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.logoLink:hover {
+  opacity: 0.85;
+}
+
+.logo {
+  width: auto;
+  object-fit: contain;
+}
+
+.logoHorizontal {
+  height: 42px;
+}
+
+.logoMark {
+  height: 40px;
+}
+
+@media (max-width: 600px) {
+  .logoHorizontal {
+    height: 34px;
+  }
+}

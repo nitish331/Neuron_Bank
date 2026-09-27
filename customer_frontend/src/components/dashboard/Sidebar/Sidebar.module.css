@@ -1,0 +1,111 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 256px;
+  height: 100dvh;
+  position: sticky;
+  top: 0;
+  padding: var(--space-5) var(--space-4) var(--space-4);
+  border-right: 1px solid var(--dash-border);
+  background: var(--dash-sidebar);
+  transition: width var(--duration-base) var(--ease-out);
+}
+
+.isCollapsed {
+  width: 84px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: var(--space-6);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.link,
+.collapse {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: 0.7rem var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--dash-text-secondary);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  transition: background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.link:hover,
+.collapse:hover {
+  background: var(--dash-hover);
+  color: var(--dash-text);
+}
+
+.isActive {
+  background: var(--gradient-cta);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35);
+}
+
+.isActive:hover {
+  background: var(--gradient-cta);
+  color: #fff;
+}
+
+.linkIcon,
+.collapseIcon {
+  flex-shrink: 0;
+}
+
+.collapse {
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--dash-border);
+  border-radius: 0;
+  padding-top: var(--space-4);
+  color: var(--dash-text-muted);
+}
+
+/* Labels fold away with the rail; the icons stay centred. */
+.isCollapsed .link,
+.isCollapsed .collapse {
+  justify-content: center;
+  padding-inline: 0;
+}
+
+.isCollapsed .linkLabel {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 84px;
+  }
+
+  .sidebar .linkLabel {
+    display: none;
+  }
+
+  .sidebar .link,
+  .sidebar .collapse {
+    justify-content: center;
+    padding-inline: 0;
+  }
+
+  .collapse {
+    display: none;
+  }
+}

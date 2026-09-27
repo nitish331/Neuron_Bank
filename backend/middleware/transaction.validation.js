@@ -1,4 +1,4 @@
-const { body } = require("express-validator");
+const { body, query } = require("express-validator");
 
 function amountValidation() {
   return body("amount")
@@ -53,4 +53,43 @@ const transferValidation = [
 
 const depositValidation = [amountValidation(), descriptionValidation()];
 
-module.exports = { transferValidation, depositValidation };
+const listTransactionsValidation = [
+  query("page")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Page must be a whole number of 1 or more")
+    .toInt(),
+  query("limit")
+    .optional()
+    .isInt({ min: 1, max: 100 })
+    .withMessage("Limit must be between 1 and 100")
+    .toInt(),
+  query("type")
+    .optional()
+    .isIn(["debit", "credit"])
+    .withMessage("Type must be either debit or credit"),
+  query("startDate")
+    .optional()
+    .isISO8601()
+    .withMessage("Start date must be a valid date"),
+  query("endDate")
+    .optional()
+    .isISO8601()
+    .withMessage("End date must be a valid date")
+    .bail()
+    .custom((value, { req }) => {
+      const { startDate } = req.query;
+
+      if (startDate && new Date(value) < new Date(startDate)) {
+        throw new Error("End date cannot be before the start date");
+      }
+
+      return true;
+    }),
+];
+
+module.exports = {
+  transferValidation,
+  depositValidation,
+  listTransactionsValidation,
+};
