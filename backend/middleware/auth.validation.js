@@ -24,6 +24,30 @@ function passwordValidation() {
     .withMessage("Password is required");
 }
 
+// Shared by signup and password reset, so the two rules cannot drift apart.
+function strongPasswordValidation(field = "password") {
+  return body(field)
+    .isString()
+    .withMessage("Password must be text")
+    .bail()
+    .notEmpty()
+    .withMessage("Password is required")
+    .bail()
+    .isStrongPassword({
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    })
+    .withMessage(
+      "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol"
+    )
+    .bail()
+    .isLength({ max: 128 })
+    .withMessage("Password must not exceed 128 characters");
+}
+
 const registerValidation = [
   body("name")
     .isString()
@@ -63,20 +87,7 @@ const registerValidation = [
       return true;
     })
     .toDate(),
-  passwordValidation()
-    .isStrongPassword({
-      minLength: 8,
-      minLowercase: 1,
-      minUppercase: 1,
-      minNumbers: 1,
-      minSymbols: 1,
-    })
-    .withMessage(
-      "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol"
-    )
-    .bail()
-    .isLength({ max: 128 })
-    .withMessage("Password must not exceed 128 characters"),
+  strongPasswordValidation(),
 ];
 
 const loginValidation = [emailValidation(), passwordValidation()];
@@ -111,6 +122,8 @@ function handleValidationErrors(req, res, next) {
 }
 
 module.exports = {
+  emailValidation,
+  strongPasswordValidation,
   registerValidation,
   loginValidation,
   refreshTokenValidation,

@@ -1,0 +1,11 @@
+New sign-in to your account
+
+Hi {{ name }}, you signed in to your Neuron Bank account. We send this note
+every time, so you always know when your account is used.
+
+    Signed in: {{ signedInAt }}
+
+If this was not you, change your password right away. Someone else may know
+both your password and your email code.
+
+Neuron Bank - This is an automated message, please do not reply.

@@ -1,0 +1,69 @@
+/* Every --dash-* token lives here and cascades to the whole dashboard, so the
+   rest of the app keeps the dark-only globals in tokens.css. */
+.shell {
+  display: flex;
+  min-height: 100dvh;
+  background: var(--dash-bg);
+  color: var(--dash-text);
+}
+
+.shell[data-theme='dark'] {
+  --dash-bg: #05060f;
+  --dash-sidebar: #08091a;
+  --dash-surface: #0f1129;
+  --dash-surface-2: #151833;
+  --dash-border: rgba(255, 255, 255, 0.08);
+  --dash-hover: rgba(255, 255, 255, 0.06);
+  --dash-text: #ffffff;
+  --dash-text-secondary: #b8bcd6;
+  --dash-text-muted: #7c8199;
+  --dash-grid: rgba(255, 255, 255, 0.07);
+
+  /* Validated for the dark surface — see the categorical palette below. */
+  --dash-chart-surface: #0f1129;
+}
+
+.shell[data-theme='light'] {
+  --dash-bg: #f5f6fb;
+  --dash-sidebar: #ffffff;
+  --dash-surface: #ffffff;
+  --dash-surface-2: #f2f3f9;
+  --dash-border: rgba(15, 17, 41, 0.1);
+  --dash-hover: rgba(15, 17, 41, 0.05);
+  --dash-text: #0f1129;
+  --dash-text-secondary: #4a4f6a;
+  --dash-text-muted: #7c8199;
+  --dash-grid: rgba(15, 17, 41, 0.09);
+
+  --dash-chart-surface: #ffffff;
+}
+
+/* Categorical series colours. One validated set covers both modes: every hue
+   clears the CVD, chroma and contrast checks on either surface. */
+.shell {
+  --series-1: #8b5cf6;
+  --series-2: #d97706;
+  --series-3: #0891b2;
+  --series-4: #db2777;
+  --series-5: #2563eb;
+
+  --dash-positive: #059669;
+  --dash-negative: #dc2626;
+}
+
+.shell[data-theme='dark'] {
+  --dash-positive: #34d399;
+  --dash-negative: #f87171;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.content {
+  flex: 1;
+  padding: clamp(var(--space-4), 2.5vw, var(--space-7));
+}

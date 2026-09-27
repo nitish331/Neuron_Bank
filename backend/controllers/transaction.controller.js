@@ -228,4 +228,72 @@ async function deposit(req, res, next) {
   }
 }
 
-module.exports = { transfer, deposit };
+const DEFAULT_PAGE_SIZE = 20;
+
+async function listTransactions(req, res, next) {
+  try {
+    // Express 5 makes req.query read only, so the validator's toInt never lands.
+    const page = Number.parseInt(req.query.page, 10) || 1;
+    const limit = Number.parseInt(req.query.limit, 10) || DEFAULT_PAGE_SIZE;
+    const { type, startDate, endDate } = req.query;
+
+    const account = await Account.findOne({ user: req.user._id }).lean();
+
+    if (!account) {
+      throw createHttpError(404, "No account found for the logged in user");
+    }
+
+    const filter = { account: account._id };
+
+    if (type) {
+      filter.type = type;
+    }
+
+    if (startDate || endDate) {
+      filter.dateTime = {};
+
+      if (startDate) {
+        filter.dateTime.$gte = new Date(startDate);
+      }
+
+      if (endDate) {
+        // A bare date means the whole of that day, not midnight.
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        filter.dateTime.$lte = end;
+      }
+    }
+
+    // The { account, dateTime } index covers this sort, so paging stays cheap.
+    const [transactions, total] = await Promise.all([
+      Transaction.find(filter)
+        .sort({ dateTime: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean(),
+      Transaction.countDocuments(filter),
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      message: "transactions fetched successfully",
+      data: {
+        accountNumber: account.accountNumber,
+        balance: roundMoney(account.balance),
+        currency: account.currency,
+        transactions: transactions.map(publicTransaction),
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+          hasMore: page * limit < total,
+        },
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+module.exports = { transfer, deposit, listTransactions };

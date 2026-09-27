@@ -1,0 +1,100 @@
+.page {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: var(--space-6) var(--container-gutter);
+  background: var(--surface-base);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  width: min(100%, 30rem);
+  text-align: center;
+}
+
+/* Standalone gets its own panel; inside the login card it inherits one. */
+.page .card {
+  gap: var(--space-5);
+  padding: clamp(var(--space-6), 4vw, var(--space-8)) var(--space-6);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  background: linear-gradient(180deg, rgba(18, 20, 46, 0.75) 0%, rgba(8, 9, 22, 0.75) 100%);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+}
+
+/* A routine wait reads as in-progress, not as a failure. */
+.isPending {
+  background: rgba(139, 92, 246, 0.14);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  color: #c4b5fd;
+}
+
+.isStopped {
+  background: rgba(251, 191, 36, 0.14);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: var(--color-warning);
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+}
+
+.holder {
+  margin-top: var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+.text {
+  max-width: 26rem;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.primary,
+.ghost {
+  padding: 0.7rem var(--space-5);
+  border-radius: var(--radius-pill);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+}
+
+.primary {
+  background: var(--gradient-cta);
+  color: #fff;
+}
+
+.primary:hover {
+  box-shadow: var(--shadow-cta);
+}
+
+.ghost {
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+}
+
+.ghost:hover {
+  background: var(--surface-glass);
+}

@@ -1,0 +1,13 @@
+Confirm your card change
+
+Hi {{ name }}, use the code below to confirm a change to your Neuron Bank debit
+card ending {{ last4 }}.
+
+    {{ code }}
+
+If this was not you, do not share this code. Someone with access to your
+account is trying to change your card settings.
+
+This code expires in {{ expiresInMinutes }} minutes.
+
+Neuron Bank - This is an automated message, please do not reply.

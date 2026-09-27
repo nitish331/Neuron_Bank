@@ -1,0 +1,21 @@
+{
+  "short_name": "Neuron Bank",
+  "name": "Neuron Bank — Smarter Banking. Stronger Future.",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "neuron-mark.png",
+      "type": "image/png",
+      "sizes": "256x218",
+      "purpose": "any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#05060f",
+  "background_color": "#05060f"
+}

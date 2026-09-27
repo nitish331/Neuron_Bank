@@ -1,0 +1,634 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ---------- Greeting ---------- */
+.greeting {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.greetingTitle {
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.greetingText {
+  margin-top: var(--space-2);
+  color: var(--dash-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.quote {
+  color: var(--dash-text-secondary);
+  font-size: var(--text-sm);
+  font-style: italic;
+  line-height: 1.6;
+  text-align: right;
+}
+
+/* ---------- Shared card ---------- */
+.card,
+.balance,
+.tile,
+.promo {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  min-width: 0;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.cardTitle {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+
+.cardTools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* ---------- Balance ---------- */
+.balance {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  padding: var(--space-6);
+  background:
+    radial-gradient(60% 120% at 12% 50%, rgba(139, 92, 246, 0.16) 0%, transparent 70%),
+    var(--dash-surface);
+}
+
+.balanceLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--dash-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.balanceEye {
+  display: grid;
+  place-items: center;
+  color: var(--dash-text-muted);
+  cursor: pointer;
+}
+
+.balanceEye:hover {
+  color: var(--dash-text);
+}
+
+.balanceAmount {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: var(--space-3) 0;
+  font-size: clamp(2rem, 4vw, 2.9rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.balanceSymbol {
+  font-weight: var(--weight-semibold);
+}
+
+/* Paise step down so the rupee figure carries the emphasis. */
+.balanceFraction {
+  font-size: 0.55em;
+  font-weight: var(--weight-semibold);
+  color: var(--dash-text-secondary);
+}
+
+.balanceMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--dash-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.balanceActions {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.actionPrimary,
+.actionGhost {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.actionPrimary {
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  background: rgba(139, 92, 246, 0.12);
+  color: var(--dash-text);
+}
+
+.actionGhost {
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface-2);
+  color: var(--dash-text);
+}
+
+.actionPrimary:hover,
+.actionGhost:hover {
+  transform: translateY(-1px);
+  border-color: rgba(139, 92, 246, 0.75);
+}
+
+.actionIcon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--gradient-cta);
+  color: #fff;
+}
+
+/* ---------- Summary tiles ---------- */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.tile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  min-width: 0;
+}
+
+.tileIcon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-md);
+}
+
+.tilePositive {
+  background: rgba(5, 150, 105, 0.14);
+  color: var(--dash-positive);
+}
+
+.tileNegative {
+  background: rgba(220, 38, 38, 0.14);
+  color: var(--dash-negative);
+}
+
+.tileNeutral {
+  background: rgba(139, 92, 246, 0.16);
+  color: #8b5cf6;
+}
+
+.tileBody {
+  min-width: 0;
+}
+
+.tileLabel {
+  color: var(--dash-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.tileAmount {
+  margin: 2px 0 4px;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.tileMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--dash-text-muted);
+  font-size: var(--text-xs);
+}
+
+.tileDelta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-weight: var(--weight-semibold);
+}
+
+/* Direction alone is not the signal: more money out is worse, not better. */
+.deltaGood {
+  color: var(--dash-positive);
+}
+
+.deltaBad {
+  color: var(--dash-negative);
+}
+
+/* ---------- Grid ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+/* ---------- Charts ---------- */
+.chartArea {
+  height: 240px;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.legendItem,
+.donutLegendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--dash-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.legendSwatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.rangeSelect select {
+  padding: 0.45rem var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface-2);
+  color: var(--dash-text);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.rangeSelect select:focus {
+  outline: none;
+  border-color: rgba(139, 92, 246, 0.7);
+}
+
+/* ---------- Doughnut ---------- */
+.donutRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.donutWrap {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  flex-shrink: 0;
+}
+
+.donutCentre {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  pointer-events: none;
+  text-align: center;
+}
+
+.donutCentre strong {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.donutCentre span {
+  color: var(--dash-text-muted);
+  font-size: var(--text-xs);
+}
+
+.donutLegend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 10rem;
+}
+
+.donutLegendLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+/* Flags a figure that is still a placeholder rather than live data. */
+.estimated {
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--dash-border);
+  color: var(--dash-text-muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.donutLegendValue {
+  color: var(--dash-text);
+  font-weight: var(--weight-semibold);
+}
+
+/* ---------- Transactions ---------- */
+.viewAll {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: #8b5cf6;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.viewAll:hover {
+  text-decoration: underline;
+}
+
+/* Wide tables scroll inside the card rather than the page. */
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.table th,
+.table td {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* Flush the outer edges with the card padding. */
+.table th:first-child,
+.table td:first-child {
+  padding-left: 0;
+}
+
+.table th:last-child,
+.table td:last-child {
+  padding-right: 0;
+}
+
+.table th {
+  padding-top: 0;
+  border-bottom: 1px solid var(--dash-border);
+  color: var(--dash-text-muted);
+  font-weight: var(--weight-medium);
+}
+
+.table td {
+  border-bottom: 1px solid var(--dash-border);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Scoped past `.table th` so the header matches its column's cells. */
+.table .alignRight {
+  text-align: right;
+}
+
+.cellDate,
+.cellCategory {
+  color: var(--dash-text-secondary);
+  width: 1%;
+}
+
+/* width:100% + max-width:0 makes this column absorb the slack and ellipsise. */
+.cellDescription {
+  width: 100%;
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: var(--weight-medium);
+}
+
+.cellAmount {
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.amountIn {
+  color: var(--dash-positive);
+}
+
+.amountOut {
+  color: var(--dash-negative);
+}
+
+/* ---------- Table states ---------- */
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.skeletonRow {
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--dash-surface-2) 25%,
+    var(--dash-hover) 37%,
+    var(--dash-surface-2) 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 50%;
+  }
+  to {
+    background-position: 0 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonRow {
+    animation: none;
+  }
+}
+
+.tableError {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.1);
+  color: #fca5a5;
+  font-size: var(--text-sm);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-6);
+  color: var(--dash-text-secondary);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+.emptyIcon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--space-2);
+  border-radius: 50%;
+  background: rgba(139, 92, 246, 0.14);
+  color: #8b5cf6;
+}
+
+.emptyHint {
+  color: var(--dash-text-muted);
+  font-size: var(--text-xs);
+}
+
+/* ---------- Promo ---------- */
+.promo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background:
+    radial-gradient(80% 120% at 100% 0%, rgba(139, 92, 246, 0.22) 0%, transparent 70%),
+    var(--dash-surface);
+}
+
+.promoIcon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: rgba(139, 92, 246, 0.16);
+  color: #8b5cf6;
+}
+
+.promoTitle {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+
+.promoText {
+  color: var(--dash-text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.promoAction {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: 0.65rem var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--gradient-cta);
+  color: #fff;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.promoAction:hover {
+  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.4);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1180px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .greeting {
+    flex-direction: column;
+  }
+
+  .quote {
+    text-align: left;
+  }
+
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .balanceActions {
+    width: 100%;
+  }
+
+  .actionPrimary,
+  .actionGhost {
+    flex: 1;
+    justify-content: center;
+  }
+}

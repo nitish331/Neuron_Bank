@@ -20,6 +20,7 @@ function publicLoginData(user, account) {
     name: user.name,
     email: user.email,
     phoneNumber: user.phoneNumber,
+    dateOfBirth: user.dateOfBirth,
     role: user.role,
     status: user.status,
     accountStatus: account?.status ?? null,

@@ -1,0 +1,14 @@
+Set your card PIN
+
+Hi {{ name }}, open the link below to set a new PIN for your Neuron Bank debit
+card ending {{ last4 }}.
+
+    {{ resetUrl }}
+
+If you did not ask for this, ignore this email and your PIN stays as it is.
+Never share this link, and never share your PIN with anyone, including Neuron
+Bank staff.
+
+This link expires in {{ expiresInMinutes }} minutes and can only be used once.
+
+Neuron Bank - This is an automated message, please do not reply.

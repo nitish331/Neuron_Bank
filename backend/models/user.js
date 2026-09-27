@@ -31,6 +31,9 @@ const userSchema = new mongoose.Schema(
         message: "Date of birth cannot be in the future",
       },
     },
+    emailVerifiedAt: {
+      type: Date,
+    },
     passwordHash: {
       type: String,
       required: [true, "Password hash is required"],
