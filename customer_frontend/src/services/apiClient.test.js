@@ -114,3 +114,68 @@ test('an unauthenticated 401 surfaces as a normal error', async () => {
   });
   expect(refreshCalls).toBe(0);
 });
+
+describe('binary responses', () => {
+  function pdfReply(status = 200) {
+    return {
+      ok: status >= 200 && status < 300,
+      status,
+      blob: async () => ({ type: 'application/pdf', size: 1234 }),
+      headers: {
+        get: (name) =>
+          name === 'Content-Disposition'
+            ? 'attachment; filename="neuron-bank-statement-2026-09-29.pdf"'
+            : null,
+      },
+      text: async () => '',
+    };
+  }
+
+  test('a blob request returns the body and the filename from the header', async () => {
+    global.fetch = jest.fn(async () => pdfReply());
+
+    const result = await request('/transactions/statement', {
+      auth: true,
+      responseType: 'blob',
+    });
+
+    expect(result.blob.type).toBe('application/pdf');
+    expect(result.filename).toBe('neuron-bank-statement-2026-09-29.pdf');
+  });
+
+  test('a 401 on a download refreshes and replays as a blob, not as JSON', async () => {
+    let refreshed = false;
+
+    global.fetch = jest.fn(async (url, options) => {
+      if (url.endsWith('/refresh-token')) {
+        refreshed = true;
+        return reply(200, { success: true, token: 'new-token' });
+      }
+      if (options.headers.Authorization === NEW) return pdfReply();
+      return reply(401, { success: false, message: 'Access token is invalid or expired' });
+    });
+
+    const result = await request('/transactions/statement', {
+      auth: true,
+      responseType: 'blob',
+    });
+
+    expect(refreshed).toBe(true);
+    // The replay must not fall back to JSON parsing.
+    expect(result.blob.type).toBe('application/pdf');
+    expect(result.filename).toContain('.pdf');
+  });
+
+  test('an error on a blob endpoint still surfaces the JSON message', async () => {
+    global.fetch = jest.fn(async () =>
+      reply(404, { success: false, message: 'No account found for the logged in user' }),
+    );
+
+    await expect(
+      request('/transactions/statement', { auth: true, responseType: 'blob' }),
+    ).rejects.toMatchObject({
+      status: 404,
+      message: 'No account found for the logged in user',
+    });
+  });
+});

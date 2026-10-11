@@ -8,19 +8,15 @@ import DashboardLayout from '../components/dashboard/DashboardLayout/DashboardLa
 import Dashboard from '../pages/Dashboard/Dashboard';
 import Transactions from '../pages/Transactions/Transactions';
 import Profile from '../pages/Profile/Profile';
+import Beneficiaries from '../pages/Beneficiaries/Beneficiaries';
+import Investments from '../pages/Investments/Investments';
+import Loans from '../pages/Loans/Loans';
+import Support from '../pages/Support/Support';
+import ProductPage from '../pages/Product/ProductPage';
 import ResetPassword from '../pages/ResetPassword/ResetPassword';
 import SetCardPin from '../pages/SetCardPin/SetCardPin';
 import Cards from '../pages/Cards/Cards';
-import ComingSoon from '../pages/Dashboard/ComingSoon';
 import { ROUTES } from './paths';
-
-/** Sidebar destinations without a screen yet. */
-const PLACEHOLDER_ROUTES = [
-  ROUTES.dashboardAccounts,
-  ROUTES.dashboardInvestments,
-  ROUTES.dashboardLoans,
-  ROUTES.dashboardSupport,
-];
 
 function AppRoutes() {
   return (
@@ -30,17 +26,25 @@ function AppRoutes() {
       <Route path={ROUTES.register} element={<Register />} />
       <Route path={ROUTES.resetPassword} element={<ResetPassword />} />
       <Route path={ROUTES.setCardPin} element={<SetCardPin />} />
+      <Route path={ROUTES.support} element={<Support standalone />} />
+
+      {/* Public product pages behind the marketing nav and footer links. */}
+      <Route path={ROUTES.accounts} element={<ProductPage product="accounts" />} />
+      <Route path={ROUTES.cards} element={<ProductPage product="cards" />} />
+      <Route path={ROUTES.loans} element={<ProductPage product="loans" />} />
+      <Route path={ROUTES.investments} element={<ProductPage product="investments" />} />
 
       {/* Every dashboard route sits behind the active-account gate. */}
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
           <Route path={ROUTES.dashboard} element={<Dashboard />} />
           <Route path={ROUTES.dashboardTransactions} element={<Transactions />} />
+          <Route path={ROUTES.dashboardBeneficiaries} element={<Beneficiaries />} />
           <Route path={ROUTES.dashboardProfile} element={<Profile />} />
+          <Route path={ROUTES.dashboardInvestments} element={<Investments />} />
+          <Route path={ROUTES.dashboardLoans} element={<Loans />} />
           <Route path={ROUTES.dashboardCards} element={<Cards />} />
-          {PLACEHOLDER_ROUTES.map((path) => (
-            <Route key={path} path={path} element={<ComingSoon />} />
-          ))}
+          <Route path={ROUTES.dashboardSupport} element={<Support />} />
         </Route>
       </Route>
 

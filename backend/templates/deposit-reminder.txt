@@ -1,0 +1,17 @@
+Your deposit matures in {{ daysLeft }} days
+
+Hi {{ name }}, your {{ depositType }} {{ depositNumber }} matures on
+{{ maturityDate }}. Nothing is needed from you. The maturity amount is credited
+to your account automatically on the day.
+
+    Deposit number : {{ depositNumber }}
+    Deposited      : INR {{ principal }}
+    Interest rate  : {{ interestRate }}% ({{ rateLabel }})
+    Maturity amount: INR {{ maturityAmount }}
+    Maturity date  : {{ maturityDate }}
+    Credited to    : {{ accountNumber }}
+
+Closing a deposit before it matures costs {{ penaltyPercent }}% of the payout,
+so it is worth waiting the last few days.
+
+Neuron Bank - This is an automated message, please do not reply.

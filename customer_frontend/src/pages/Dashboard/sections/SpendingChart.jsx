@@ -4,9 +4,11 @@ import { Doughnut } from 'react-chartjs-2';
 import {
   selectAnalyticsBalance,
   selectCashflow,
+  selectFixedDeposits,
   selectInvestments,
   selectLoans,
   selectPlaceholders,
+  selectRecurringDeposits,
 } from '../../../store/analyticsSlice';
 import { formatCurrency } from '../../../utils/format';
 import styles from '../Dashboard.module.css';
@@ -21,6 +23,8 @@ function SpendingChart({ theme }) {
   const { moneyOut } = useSelector(selectCashflow);
   const investments = useSelector(selectInvestments);
   const loans = useSelector(selectLoans);
+  const fd = useSelector(selectFixedDeposits);
+  const rd = useSelector(selectRecurringDeposits);
   const placeholders = useSelector(selectPlaceholders);
 
   const isDark = theme === 'dark';
@@ -36,8 +40,9 @@ function SpendingChart({ theme }) {
     },
     { label: 'Spendings', value: moneyOut, real: true },
     {
+      // Outstanding, not the amount borrowed: this slice is what is still owed.
       label: 'Loans',
-      value: loans?.total ?? 0,
+      value: loans?.outstanding ?? 0,
       real: !placeholders.includes('loans'),
     },
   ];
@@ -117,6 +122,30 @@ function SpendingChart({ theme }) {
           ))}
         </ul>
       </div>
+
+      {/* Only worth the space once something is actually locked away. */}
+      {Boolean(fd?.activeCount || rd?.activeCount) && (
+        <dl className={styles.depositSplit}>
+          <div>
+            <dt>Fixed deposits</dt>
+            <dd>
+              {formatCurrency(fd.principal)}
+              <span>{fd.activeCount} active</span>
+            </dd>
+          </div>
+          <div>
+            <dt>Recurring deposits</dt>
+            <dd>
+              {formatCurrency(rd.deposited)}
+              <span>
+                {rd.monthlyCommitment
+                  ? `${formatCurrency(rd.monthlyCommitment)} per month`
+                  : `${rd.activeCount} active`}
+              </span>
+            </dd>
+          </div>
+        </dl>
+      )}
     </section>
   );
 }

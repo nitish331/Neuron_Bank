@@ -1,0 +1,19 @@
+Your fixed deposit is open
+
+Hi {{ name }}, INR {{ principal }} has moved from your account
+{{ accountNumber }} into a new fixed deposit.
+
+    Deposit number : {{ depositNumber }}
+    Principal      : INR {{ principal }}
+    Term           : {{ tenure }}
+    Interest rate  : {{ interestRate }}% ({{ rateLabel }})
+    Maturity amount: INR {{ maturityAmount }}
+    Maturity date  : {{ maturityDate }}
+
+We will remind you five days before it matures, and the maturity amount is
+credited back to {{ accountNumber }} automatically on the day.
+
+Closing this deposit before {{ maturityDate }} costs {{ penaltyPercent }}% of
+the payout.
+
+Neuron Bank - This is an automated message, please do not reply.

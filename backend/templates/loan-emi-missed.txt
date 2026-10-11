@@ -1,0 +1,19 @@
+Missed instalment: your account is blocked
+
+Hi {{ name }}, instalment {{ installmentNumber }} of INR {{ emiAmount }} on your
+loan could not be taken from account {{ accountNumber }}, because the balance
+was too low.
+
+    Instalment            : {{ installmentNumber }} of {{ totalEmis }}
+    Amount due            : INR {{ emiAmount }}
+    Balance at the time   : INR {{ balance }}
+    Instalments missed    : {{ emisMissed }}
+    Still owed on the loan: INR {{ outstanding }}
+
+Your account is blocked until the arrears are cleared. Transfers, deposits and
+new services are unavailable in the meantime.
+
+Pay money into {{ accountNumber }} and the instalment is taken automatically at
+the next collection, which unblocks your account.
+
+Neuron Bank - This is an automated message, please do not reply.

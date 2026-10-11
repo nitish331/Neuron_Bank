@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
   deposit as depositRequest,
   fetchTransactions,
+  transfer as transferRequest,
 } from '../services/account.service';
 import { ApiError } from '../services/apiClient';
 
@@ -23,6 +24,18 @@ export const deposit = createAsyncThunk(
     try {
       const response = await depositRequest({ amount, description });
       return response.data;
+    } catch (error) {
+      return rejectWithValue(toRejection(error));
+    }
+  },
+);
+
+export const transfer = createAsyncThunk(
+  'account/transfer',
+  async ({ beneficiaryId, amount, description }, { rejectWithValue }) => {
+    try {
+      const response = await transferRequest({ beneficiaryId, amount, description });
+      return response;
     } catch (error) {
       return rejectWithValue(toRejection(error));
     }
@@ -56,6 +69,8 @@ const initialState = {
   transactionsError: null,
   depositStatus: 'idle',
   depositError: null,
+  transferStatus: 'idle',
+  transferError: null,
 };
 
 const accountSlice = createSlice({
@@ -65,6 +80,10 @@ const accountSlice = createSlice({
     depositReset(state) {
       state.depositStatus = 'idle';
       state.depositError = null;
+    },
+    transferReset(state) {
+      state.transferStatus = 'idle';
+      state.transferError = null;
     },
   },
   extraReducers: (builder) => {
@@ -108,11 +127,32 @@ const accountSlice = createSlice({
       .addCase(deposit.rejected, (state, action) => {
         state.depositStatus = 'failed';
         state.depositError = action.payload;
+      })
+
+      .addCase(transfer.pending, (state) => {
+        state.transferStatus = 'pending';
+        state.transferError = null;
+      })
+      .addCase(transfer.fulfilled, (state, action) => {
+        const { balance, transaction } = action.payload.data;
+
+        state.transferStatus = 'succeeded';
+        state.balance = balance;
+        // The debit row only, which is the side this account sees.
+        state.transactions = [transaction, ...state.transactions];
+
+        if (state.pagination) {
+          state.pagination.total += 1;
+        }
+      })
+      .addCase(transfer.rejected, (state, action) => {
+        state.transferStatus = 'failed';
+        state.transferError = action.payload;
       });
   },
 });
 
-export const { depositReset } = accountSlice.actions;
+export const { depositReset, transferReset } = accountSlice.actions;
 
 export const selectTransactions = (state) => state.account.transactions;
 export const selectTransactionsStatus = (state) => state.account.transactionsStatus;
@@ -124,5 +164,7 @@ export const selectAccountSummary = (state) => ({
 });
 export const selectDepositStatus = (state) => state.account.depositStatus;
 export const selectDepositError = (state) => state.account.depositError;
+export const selectTransferStatus = (state) => state.account.transferStatus;
+export const selectTransferError = (state) => state.account.transferError;
 
 export default accountSlice.reducer;

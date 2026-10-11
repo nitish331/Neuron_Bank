@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Account = require("../models/account");
 const User = require("../models/user");
+const Beneficiary = require("../models/beneficiary");
 const Transaction = require("../models/transaction");
 const { createHttpError } = require("../utils/authUtils");
 const {
@@ -9,15 +10,20 @@ const {
   publicTransaction,
 } = require("../utils/transactionUtils");
 
+function formatAmount(amount) {
+  return `INR ${amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+}
+
 async function transfer(req, res, next) {
   let session;
 
   try {
     session = await mongoose.startSession();
-    const { receiverAccountNumber, description } = req.body;
+    const { beneficiaryId, description } = req.body;
     const amount = roundMoney(req.body.amount);
     let debitTransaction;
     let senderBalance;
+    let payee;
 
     await session.withTransaction(async () => {
       const senderAccount = await Account.findOne({ user: req.user._id })
@@ -27,14 +33,33 @@ async function transfer(req, res, next) {
         throw createHttpError(404, "No account found for the logged in user");
       }
 
-      const receiverAccount = await Account.findOne({
-        accountNumber: receiverAccountNumber,
+      // Money only moves to a payee the customer has already saved.
+      const beneficiary = await Beneficiary.findOne({
+        _id: beneficiaryId,
+        user: req.user._id,
       }).session(session);
+
+      if (!beneficiary) {
+        throw createHttpError(404, "Beneficiary not found");
+      }
+
+      if (beneficiary.status !== "active") {
+        throw createHttpError(
+          403,
+          `${beneficiary.name} is disabled. Enable this beneficiary before sending money`,
+        );
+      }
+
+      payee = beneficiary;
+
+      const receiverAccount = await Account.findById(beneficiary.account).session(
+        session,
+      );
 
       if (!receiverAccount) {
         throw createHttpError(
           404,
-          "No account found for the provided receiver account number",
+          "The account for this beneficiary no longer exists",
         );
       }
 
@@ -52,7 +77,7 @@ async function transfer(req, res, next) {
       if (receiverAccount.status !== "active") {
         throw createHttpError(
           422,
-          "The receiver account is not active and cannot accept money",
+          `${beneficiary.name}'s account is not active and cannot accept money`,
         );
       }
 
@@ -74,7 +99,7 @@ async function transfer(req, res, next) {
       if (receiverUser.status === "suspended" || receiverUser.status === "rejected") {
         throw createHttpError(
           422,
-          "The receiver account is not able to accept money right now",
+          `${beneficiary.name} cannot accept money right now`,
         );
       }
 
@@ -140,9 +165,14 @@ async function transfer(req, res, next) {
 
     return res.status(201).json({
       success: true,
-      message: "transfer completed successfully",
+      message: `${formatAmount(amount)} sent to ${payee.name}`,
       data: {
         balance: senderBalance,
+        beneficiary: {
+          id: payee._id,
+          name: payee.name,
+          accountNumber: payee.accountNumber,
+        },
         transaction: publicTransaction(debitTransaction),
       },
     });

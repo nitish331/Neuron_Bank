@@ -6,6 +6,7 @@ import { selectAccountSummary } from '../../../store/accountSlice';
 import { selectAnalyticsBalance } from '../../../store/analyticsSlice';
 import { splitAmount } from '../../../utils/format';
 import AddMoneyModal from './AddMoneyModal';
+import SendMoneyModal from './SendMoneyModal';
 import styles from '../Dashboard.module.css';
 
 /** Shows only the last four digits of a real account number. */
@@ -19,6 +20,7 @@ function BalanceCard() {
   const analyticsBalance = useSelector(selectAnalyticsBalance);
   const [hidden, setHidden] = useState(false);
   const [addMoneyOpen, setAddMoneyOpen] = useState(false);
+  const [sendMoneyOpen, setSendMoneyOpen] = useState(false);
 
   // Freshest first: analytics, then the transactions response, then login.
   const balance = analyticsBalance ?? account.balance ?? user?.balance ?? 0;
@@ -70,13 +72,23 @@ function BalanceCard() {
           </span>
           Add Money
         </button>
-        <button type="button" className={styles.actionGhost}>
+        <button
+          type="button"
+          className={styles.actionGhost}
+          onClick={() => setSendMoneyOpen(true)}
+        >
           <Send size={18} aria-hidden="true" />
           Send Money
         </button>
       </div>
 
       <AddMoneyModal open={addMoneyOpen} onClose={() => setAddMoneyOpen(false)} />
+
+      <SendMoneyModal
+        open={sendMoneyOpen}
+        balance={balance}
+        onClose={() => setSendMoneyOpen(false)}
+      />
     </section>
   );
 }

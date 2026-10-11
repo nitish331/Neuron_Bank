@@ -32,21 +32,14 @@ function descriptionValidation() {
     .withMessage("Description must not exceed 140 characters");
 }
 
+// Money goes to a saved beneficiary, never to a typed in account number.
 const transferValidation = [
-  body("receiverAccountNumber")
-    .isString()
-    .withMessage("Receiver account number must be text")
-    .bail()
-    .trim()
+  body("beneficiaryId")
     .notEmpty()
-    .withMessage("Receiver account number is required")
+    .withMessage("Please choose a beneficiary")
     .bail()
-    .isLength({ min: 6, max: 32 })
-    .withMessage("Receiver account number must be between 6 and 32 characters")
-    .bail()
-    .matches(/^[A-Za-z0-9]+$/)
-    .withMessage("Receiver account number must be alphanumeric")
-    .toUpperCase(),
+    .isMongoId()
+    .withMessage("Beneficiary id is not valid"),
   amountValidation(),
   descriptionValidation(),
 ];
@@ -88,8 +81,35 @@ const listTransactionsValidation = [
     }),
 ];
 
+// The same filters as the table, minus paging: a statement covers the range.
+const statementValidation = [
+  query("type")
+    .optional()
+    .isIn(["debit", "credit"])
+    .withMessage("Type must be either debit or credit"),
+  query("startDate")
+    .optional()
+    .isISO8601()
+    .withMessage("Start date must be a valid date"),
+  query("endDate")
+    .optional()
+    .isISO8601()
+    .withMessage("End date must be a valid date")
+    .bail()
+    .custom((value, { req }) => {
+      const { startDate } = req.query;
+
+      if (startDate && new Date(value) < new Date(startDate)) {
+        throw new Error("End date cannot be before the start date");
+      }
+
+      return true;
+    }),
+];
+
 module.exports = {
   transferValidation,
   depositValidation,
   listTransactionsValidation,
+  statementValidation,
 };

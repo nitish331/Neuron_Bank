@@ -1,0 +1,17 @@
+We could not collect your instalment
+
+Hi {{ name }}, instalment {{ installmentNumber }} of INR {{ installmentAmount }}
+for your recurring deposit {{ depositNumber }} could not be taken from account
+{{ accountNumber }}, because the balance was too low.
+
+    Instalment           : {{ installmentNumber }} of {{ totalInstallments }}
+    Amount               : INR {{ installmentAmount }}
+    Balance at the time  : INR {{ balance }}
+    Missed so far        : {{ missedInstallments }}
+    Next attempt         : {{ nextInstallmentDate }}
+
+Your deposit stays open and the maturity date does not change. A missed month
+simply earns no interest, so the final payout will be lower than the original
+estimate.
+
+Neuron Bank - This is an automated message, please do not reply.

@@ -1,6 +1,8 @@
 const Account = require("../models/account");
 const Transaction = require("../models/transaction");
 const LoanRequest = require("../models/loanRequest");
+const FixedDeposit = require("../models/fixedDeposit");
+const RecurringDeposit = require("../models/recurringDeposit");
 const { createHttpError } = require("../utils/authUtils");
 const { roundMoney } = require("../utils/transactionUtils");
 
@@ -91,7 +93,7 @@ async function userAnalytics(req, res, next) {
     const windowStart = new Date(monthKeyToDate(monthKeys[0]).getTime() - 864e5);
     const completed = { account: account._id, status: "completed" };
 
-    const [monthlyRows, overallRows, loanRows] = await Promise.all([
+    const [monthlyRows, overallRows, loanRows, fdRows, rdRows] = await Promise.all([
       Transaction.aggregate([
         { $match: { ...completed, dateTime: { $gte: windowStart } } },
         {
@@ -127,6 +129,44 @@ async function userAnalytics(req, res, next) {
           $group: {
             _id: "$status",
             total: { $sum: "$amount" },
+            // What is still owed, which falls as the EMIs are collected.
+            outstanding: {
+              $sum: {
+                $max: [
+                  0,
+                  {
+                    $subtract: [
+                      { $ifNull: ["$totalPayable", "$amount"] },
+                      { $ifNull: ["$amountRepaid", 0] },
+                    ],
+                  },
+                ],
+              },
+            },
+            count: { $sum: 1 },
+          },
+        },
+      ]),
+      // Money currently locked away, plus what it is on track to pay back.
+      FixedDeposit.aggregate([
+        { $match: { user: req.user._id, status: "active" } },
+        {
+          $group: {
+            _id: null,
+            principal: { $sum: "$principal" },
+            maturityValue: { $sum: "$maturityAmount" },
+            count: { $sum: 1 },
+          },
+        },
+      ]),
+      RecurringDeposit.aggregate([
+        { $match: { user: req.user._id, status: "active" } },
+        {
+          $group: {
+            _id: null,
+            deposited: { $sum: "$totalDeposited" },
+            monthlyCommitment: { $sum: "$installmentAmount" },
+            projectedMaturity: { $sum: "$maturityAmount" },
             count: { $sum: 1 },
           },
         },
@@ -145,10 +185,27 @@ async function userAnalytics(req, res, next) {
     const thisMonth = buckets[currentMonth] || emptyBucket();
     const lastMonth = buckets[shiftMonthKey(currentMonth, -1)] || emptyBucket();
 
+    const fd = fdRows[0] || {};
+    const fixedDeposits = {
+      activeCount: fd.count || 0,
+      principal: roundMoney(fd.principal || 0),
+      maturityValue: roundMoney(fd.maturityValue || 0),
+    };
+
+    const rd = rdRows[0] || {};
+    const recurringDeposits = {
+      activeCount: rd.count || 0,
+      deposited: roundMoney(rd.deposited || 0),
+      monthlyCommitment: roundMoney(rd.monthlyCommitment || 0),
+      // What they pay out if every remaining instalment lands on time.
+      projectedMaturity: roundMoney(rd.projectedMaturity || 0),
+    };
+
     const loans = loanRows.reduce(
       (acc, row) => {
         if (row._id === "approved") {
           acc.total = roundMoney(row.total);
+          acc.outstanding = roundMoney(row.outstanding);
           acc.activeCount = row.count;
         } else {
           acc.pendingTotal = roundMoney(row.total);
@@ -157,7 +214,13 @@ async function userAnalytics(req, res, next) {
 
         return acc;
       },
-      { total: 0, activeCount: 0, pendingTotal: 0, pendingCount: 0 },
+      {
+        total: 0,
+        outstanding: 0,
+        activeCount: 0,
+        pendingTotal: 0,
+        pendingCount: 0,
+      },
     );
 
     return res.status(200).json({
@@ -181,9 +244,20 @@ async function userAnalytics(req, res, next) {
         },
         monthly,
         loans,
-        investments: { total: 0, count: 0 },
+        fixedDeposits,
+        recurringDeposits,
+        // Deposits are the only thing invested so far, so this is the total of
+        // the two rather than a figure of its own.
+        investments: {
+          total: roundMoney(fixedDeposits.principal + recurringDeposits.deposited),
+          count: fixedDeposits.activeCount + recurringDeposits.activeCount,
+          maturityValue: roundMoney(
+            fixedDeposits.maturityValue + recurringDeposits.projectedMaturity,
+          ),
+        },
         // Names the figures no endpoint backs yet, so the UI can label them.
-        placeholders: ["investments"],
+        // Every figure above is now backed by real records.
+        placeholders: [],
       },
     });
   } catch (error) {

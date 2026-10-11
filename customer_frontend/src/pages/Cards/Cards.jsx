@@ -257,8 +257,8 @@ function Cards() {
                     onClick={() => select(item.id)}
                     aria-current={isCurrent}
                   >
+                    {/* The artwork carries the wordmark, so no text brand here. */}
                     <span className={styles.cardTop}>
-                      <span className={styles.cardBrand}>NEURON BANK</span>
                       <Wifi size={22} aria-hidden="true" className={styles.contactless} />
                     </span>
 

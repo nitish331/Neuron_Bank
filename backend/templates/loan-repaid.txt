@@ -1,0 +1,16 @@
+Your loan is fully repaid
+
+Hi {{ name }}, the final instalment on your loan has been collected. Nothing
+further is owed.
+
+    Amount borrowed  : INR {{ amount }}
+    Purpose          : {{ purpose }}
+    Interest rate    : {{ interestRate }}% ({{ rateLabel }})
+    Instalments paid : {{ emisPaid }}
+    Total repaid     : INR {{ amountRepaid }}
+    Interest paid    : INR {{ totalInterest }}
+
+Thank you for keeping up with the repayments. You are welcome to apply for
+another loan whenever you need one.
+
+Neuron Bank - This is an automated message, please do not reply.

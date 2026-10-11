@@ -1,0 +1,15 @@
+About your loan request
+
+Hi {{ name }}, we are not able to approve your loan request for INR {{ amount }}
+at this time.
+
+    Amount requested : INR {{ amount }}
+    Purpose          : {{ purpose }}
+    Decision date    : {{ decidedAt }}
+
+Reason: {{ reason }}
+
+Nothing has been charged and your account is unchanged. You are welcome to
+apply again once the reason above no longer applies.
+
+Neuron Bank - This is an automated message, please do not reply.

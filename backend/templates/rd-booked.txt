@@ -1,0 +1,20 @@
+Your recurring deposit is open
+
+Hi {{ name }}, the first instalment of INR {{ installmentAmount }} has been
+taken from your account {{ accountNumber }}.
+
+    Deposit number    : {{ depositNumber }}
+    Monthly instalment: INR {{ installmentAmount }}
+    Instalments       : {{ totalInstallments }} ({{ tenure }})
+    Interest rate     : {{ interestRate }}% ({{ rateLabel }})
+    You will pay in   : INR {{ totalDeposited }}
+    Maturity amount   : INR {{ maturityAmount }}
+    Maturity date     : {{ maturityDate }}
+
+The next instalment is collected on {{ nextInstallmentDate }}, and then on the
+same date each month. Keep enough in your account on those days.
+
+Closing this deposit before {{ maturityDate }} costs {{ penaltyPercent }}% of
+the payout.
+
+Neuron Bank - This is an automated message, please do not reply.

@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <body style="margin: 0; padding: 24px; background-color: #f4f6fb; font-family: Arial, Helvetica, sans-serif;">
+    <div style="max-width: 480px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 32px;">
+      <h1 style="margin: 0 0 8px; font-size: 20px; color: #1a1f36;">
+        We could not collect your instalment
+      </h1>
+
+      <p style="margin: 0 0 24px; font-size: 14px; line-height: 22px; color: #4a5568;">
+        Hi {{ name }}, instalment {{ installmentNumber }} of
+        INR {{ installmentAmount }} for your recurring deposit
+        {{ depositNumber }} could not be taken from account
+        {{ accountNumber }}, because the balance was too low.
+      </p>
+
+      <div style="margin: 0 0 24px; padding: 16px; background-color: #f4f6fb; border-radius: 8px; font-size: 14px; line-height: 24px; color: #1a1f36;">
+        <strong>Instalment:</strong> {{ installmentNumber }} of {{ totalInstallments }}<br />
+        <strong>Amount:</strong> INR {{ installmentAmount }}<br />
+        <strong>Balance at the time:</strong> INR {{ balance }}<br />
+        <strong>Missed so far:</strong> {{ missedInstallments }}<br />
+        <strong>Next attempt:</strong> {{ nextInstallmentDate }}
+      </div>
+
+      <p style="margin: 0 0 24px; padding: 12px 16px; background-color: #fff8e6; border-left: 3px solid #d9a441; font-size: 14px; line-height: 22px; color: #7a5a1e;">
+        Your deposit stays open and the maturity date does not change. A missed
+        month simply earns no interest, so the final payout will be lower than
+        the original estimate.
+      </p>
+
+      <p style="margin: 0; font-size: 12px; color: #8a94a6;">
+        Neuron Bank &middot; This is an automated message, please do not reply.
+      </p>
+    </div>
+  </body>
+</html>

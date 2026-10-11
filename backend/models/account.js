@@ -27,7 +27,8 @@ const accountSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "active", "rejected", "closed"],
+      // Blocked when a loan instalment is missed, lifted once arrears clear.
+      enum: ["pending", "active", "rejected", "closed", "blocked"],
       default: "pending",
     },
     approvedBy: {
