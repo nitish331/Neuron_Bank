@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <body style="margin: 0; padding: 24px; background-color: #f4f6fb; font-family: Arial, Helvetica, sans-serif;">
+    <div style="max-width: 480px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 32px;">
+      <h1 style="margin: 0 0 8px; font-size: 20px; color: #1a1f36;">
+        Your account is active again
+      </h1>
+
+      <p style="margin: 0 0 24px; font-size: 14px; line-height: 22px; color: #4a5568;">
+        Hi {{ name }}, the suspension on your Neuron Bank account has been lifted and you can sign in as usual.
+      </p>
+
+      <div style="margin: 0 0 24px; padding: 16px; background-color: #f4f6fb; border-radius: 8px; font-size: 14px; line-height: 24px; color: #1a1f36;">
+        <strong>Account:</strong> {{ accountNumber }}<br />
+        <strong>Reactivated on:</strong> {{ decidedAt }}
+      </div>
+
+      <p style="margin: 0 0 24px; font-size: 14px; line-height: 22px; color: #4a5568;">
+        Everything is where you left it: your balance, cards, deposits and saved beneficiaries are unchanged.
+      </p>
+
+      <p style="margin: 0; font-size: 12px; color: #8a94a6;">
+        Neuron Bank &middot; This is an automated message, please do not reply.
+      </p>
+    </div>
+  </body>
+</html>

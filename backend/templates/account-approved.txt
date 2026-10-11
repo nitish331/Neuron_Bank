@@ -1,0 +1,17 @@
+Your account is open
+
+Hi {{ name }}, your Neuron Bank account has been approved and is ready to use.
+
+    Account number  : {{ accountNumber }}
+    Account type    : Savings Account
+    Currency        : {{ currency }}
+    Opening balance : INR {{ balance }}
+    Approved on     : {{ approvedAt }}
+
+You can now add money, send it to a saved beneficiary, request a debit card,
+open a deposit or apply for a loan. Sign in to get started.
+
+Keep your account number to yourself. Neuron Bank will never ask you for your
+password, card PIN or a one time code.
+
+Neuron Bank - This is an automated message, please do not reply.

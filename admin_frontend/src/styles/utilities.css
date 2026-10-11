@@ -1,0 +1,34 @@
+/**
+ * Neuron Bank — small reusable helpers.
+ * Keep this file short: anything component-specific belongs next to the component.
+ */
+
+/* Text painted with the brand gradient. */
+.u-gradient-text {
+  background: var(--gradient-brand-soft);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Frosted panel used by cards, pills and the mobile menu. */
+.u-glass {
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* Accessible label that is only announced by screen readers. */
+.u-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

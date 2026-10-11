@@ -1,0 +1,14 @@
+About your account application
+
+Hi {{ name }}, we are not able to open a Neuron Bank account for you at this
+time.
+
+    Application   : {{ accountNumber }}
+    Decision date : {{ decidedAt }}
+
+Reason: {{ reason }}
+
+Nothing has been charged. If you believe this is a mistake, or the reason above
+no longer applies, you are welcome to apply again.
+
+Neuron Bank - This is an automated message, please do not reply.

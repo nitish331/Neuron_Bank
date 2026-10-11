@@ -1,0 +1,95 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+  text-align: center;
+  cursor: pointer;
+  transition: transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out),
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Covers both `disabled` on a <button> and the busy state during a submit. */
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.35);
+}
+
+.btn:disabled:hover,
+.btn[aria-disabled='true']:hover {
+  transform: none;
+}
+
+/* ---------- Sizes ---------- */
+.btnSm {
+  padding: 0.5rem 1.1rem;
+  font-size: var(--text-sm);
+}
+
+.btnMd {
+  padding: 0.72rem 1.5rem;
+  font-size: var(--text-sm);
+}
+
+.btnLg {
+  padding: 1rem 2rem;
+  font-size: var(--text-base);
+}
+
+/* ---------- Variants ---------- */
+.btnPrimary {
+  background: var(--gradient-cta);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-cta);
+}
+
+.btnPrimary:hover {
+  box-shadow: 0 16px 40px rgba(124, 58, 237, 0.55);
+}
+
+.btnGhost {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+}
+
+.btnGhost:hover {
+  background: var(--surface-glass);
+  border-color: var(--border-strong);
+}
+
+.btnSubtle {
+  background: var(--surface-glass);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.btnSubtle:hover {
+  color: var(--text-primary);
+  background: var(--surface-glass-strong);
+}
+
+/* Trailing arrow nudges forward on hover. */
+.btn svg {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.btn:hover svg {
+  transform: translateX(3px);
+}

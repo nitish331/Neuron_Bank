@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <body style="margin: 0; padding: 24px; background-color: #f4f6fb; font-family: Arial, Helvetica, sans-serif;">
+    <div style="max-width: 480px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 32px;">
+      <h1 style="margin: 0 0 8px; font-size: 20px; color: #1a1f36;">
+        Your account has been suspended
+      </h1>
+
+      <p style="margin: 0 0 24px; font-size: 14px; line-height: 22px; color: #4a5568;">
+        Hi {{ name }}, access to your Neuron Bank account has been suspended by our team. You will not be able to sign in or move money while this is in place.
+      </p>
+
+      <div style="margin: 0 0 24px; padding: 16px; background-color: #f4f6fb; border-radius: 8px; font-size: 14px; line-height: 24px; color: #1a1f36;">
+        <strong>Account:</strong> {{ accountNumber }}<br />
+        <strong>Suspended on:</strong> {{ decidedAt }}
+      </div>
+
+      <p style="margin: 0 0 24px; padding: 12px 16px; background-color: #fff4f4; border-left: 3px solid #d64545; font-size: 14px; line-height: 22px; color: #7a2b2b;">
+        <strong>Reason:</strong> {{ reason }}
+      </p>
+
+      <p style="margin: 0 0 24px; font-size: 14px; line-height: 22px; color: #4a5568;">
+        Your money is safe and nothing has been taken. If you believe this is a mistake, reply to the team who contacted you and we will review it.
+      </p>
+
+      <p style="margin: 0; font-size: 12px; color: #8a94a6;">
+        Neuron Bank &middot; This is an automated message, please do not reply.
+      </p>
+    </div>
+  </body>
+</html>

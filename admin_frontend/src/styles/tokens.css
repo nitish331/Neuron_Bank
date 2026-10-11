@@ -1,0 +1,120 @@
+/**
+ * Neuron Bank — design tokens.
+ * Single source of truth for colour, type, spacing and elevation.
+ * Nothing in this file should reference a component.
+ */
+
+:root {
+  /* ---------- Brand ---------- */
+  --brand-violet: #a855f7;
+  --brand-purple: #7c3aed;
+  --brand-indigo: #6366f1;
+  --brand-blue: #3b82f6;
+  --brand-cyan: #22d3ee;
+
+  --gradient-brand: linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #3b82f6 100%);
+  --gradient-brand-soft: linear-gradient(135deg, #c084fc 0%, #818cf8 55%, #60a5fa 100%);
+  --gradient-cta: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+
+  /* ---------- Surfaces ---------- */
+  --surface-base: #05060f;
+  --surface-raised: #0a0b1a;
+  --surface-panel: #10122a;
+  --surface-elevated: #171935;
+  --surface-glass: rgba(255, 255, 255, 0.04);
+  --surface-glass-strong: rgba(255, 255, 255, 0.07);
+
+  /* ---------- Text ---------- */
+  --text-primary: #ffffff;
+  --text-secondary: #b8bcd6;
+  --text-muted: #7c8199;
+  --text-inverse: #05060f;
+
+  /* ---------- Borders ---------- */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-default: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.2);
+
+  /* ---------- Semantic ---------- */
+  --color-success: #34d399;
+  --color-danger: #f87171;
+  --color-warning: #fbbf24;
+  --color-info: #60a5fa;
+
+  /* ---------- Glow / elevation ---------- */
+  --glow-violet: 0 0 60px rgba(168, 85, 247, 0.35);
+  --glow-blue: 0 0 60px rgba(59, 130, 246, 0.3);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.55);
+  --shadow-cta: 0 12px 32px rgba(124, 58, 237, 0.4);
+
+  /* ---------- Typography ---------- */
+  --font-display: "Sora", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.75rem;
+  --text-5xl: clamp(2.75rem, 6vw, 4.5rem);
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-extrabold: 800;
+
+  --leading-tight: 1.05;
+  --leading-snug: 1.3;
+  --leading-normal: 1.6;
+
+  /* ---------- Spacing ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 2.5rem;
+  --space-8: 3rem;
+  --space-9: 4rem;
+  --space-10: 6rem;
+
+  /* Vertical rhythm between page sections. Adjacent sections EACH contribute
+     this, so the visible gap between two of them is twice the value. Change it
+     here to retune the whole page. */
+  --section-space: clamp(1.5rem, 2.2vw, 2.25rem);
+
+  /* ---------- Radii ---------- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
+  --radius-2xl: 36px;
+  --radius-pill: 999px;
+
+  /* ---------- Layout ---------- */
+  --container-max: 1280px;
+  --container-gutter: clamp(1rem, 4vw, 3rem);
+  --navbar-height: 76px;
+
+  /* ---------- Motion ---------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 500ms;
+
+  /* ---------- Z-index scale ---------- */
+  --z-base: 1;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-overlay: 500;
+  --z-modal: 1000;
+}
