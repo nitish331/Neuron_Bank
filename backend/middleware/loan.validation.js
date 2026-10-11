@@ -1,4 +1,5 @@
-const { body } = require("express-validator");
+const { body, query } = require("express-validator");
+const { ALLOWED_TENURES } = require("../utils/loanMath");
 
 const createLoanRequestValidation = [
   body("amount")
@@ -30,9 +31,18 @@ const createLoanRequestValidation = [
     .notEmpty()
     .withMessage("Tenure is required")
     .bail()
-    .isInt({ min: 1, max: 360 })
-    .withMessage("Tenure must be a whole number between 1 and 360 months")
-    .toInt(),
+    .isInt()
+    .withMessage("Tenure must be a whole number of months")
+    .bail()
+    .custom((value) => {
+      if (!ALLOWED_TENURES.includes(Number(value))) {
+        throw new Error(
+          `Tenure must be one of these months: ${ALLOWED_TENURES.join(", ")}`,
+        );
+      }
+
+      return true;
+    }),
   body("monthlyIncome")
     .notEmpty()
     .withMessage("Monthly income is required")
@@ -42,4 +52,30 @@ const createLoanRequestValidation = [
     .toFloat(),
 ];
 
-module.exports = { createLoanRequestValidation };
+const listLoanRequestsValidation = [
+  query("status")
+    .optional()
+    .isIn(["pending", "approved", "rejected"])
+    .withMessage("Status must be pending, approved or rejected"),
+  query("page")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Page must be a whole number of 1 or more"),
+  query("limit")
+    .optional()
+    .isInt({ min: 1, max: 100 })
+    .withMessage("Limit must be between 1 and 100"),
+];
+
+const loanRatesValidation = [
+  query("amount")
+    .optional()
+    .isFloat({ min: 1 })
+    .withMessage("Amount must be a positive number"),
+];
+
+module.exports = {
+  createLoanRequestValidation,
+  listLoanRequestsValidation,
+  loanRatesValidation,
+};

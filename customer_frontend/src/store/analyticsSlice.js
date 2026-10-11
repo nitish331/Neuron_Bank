@@ -29,6 +29,8 @@ const initialState = {
   deltas: null,
   monthly: [],
   loans: null,
+  fixedDeposits: null,
+  recurringDeposits: null,
   investments: null,
   placeholders: [],
   status: 'idle',
@@ -57,6 +59,8 @@ const analyticsSlice = createSlice({
         state.deltas = payload.deltas;
         state.monthly = payload.monthly ?? [];
         state.loans = payload.loans;
+        state.fixedDeposits = payload.fixedDeposits;
+        state.recurringDeposits = payload.recurringDeposits;
         state.investments = payload.investments;
         state.placeholders = payload.placeholders ?? [];
       })
@@ -73,6 +77,9 @@ export const selectAnalyticsMonths = (state) => state.analytics.months;
 export const selectAnalyticsBalance = (state) => state.analytics.balance;
 export const selectLoans = (state) => state.analytics.loans;
 export const selectInvestments = (state) => state.analytics.investments;
+export const selectFixedDeposits = (state) => state.analytics.fixedDeposits;
+export const selectRecurringDeposits = (state) => state.analytics.recurringDeposits;
+export const selectOverall = (state) => state.analytics.overall;
 export const selectPlaceholders = (state) => state.analytics.placeholders;
 
 /** Money In / Money Out for the current month, with month-on-month deltas. */

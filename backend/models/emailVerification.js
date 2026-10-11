@@ -11,7 +11,15 @@ const emailVerificationSchema = new mongoose.Schema(
     // Keeps a signup code and a login code for the same address independent.
     purpose: {
       type: String,
-      enum: ["register", "login", "reset", "card", "cardPin"],
+      enum: [
+        "register",
+        "login",
+        "reset",
+        "card",
+        "cardPin",
+        "beneficiary",
+        "deposit",
+      ],
       required: [true, "Purpose is required"],
     },
     // A 6 digit code for the register and login flows, a reset token for reset.

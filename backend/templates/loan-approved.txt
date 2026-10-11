@@ -1,0 +1,22 @@
+Your loan has been approved
+
+Hi {{ name }}, your loan request has been approved and INR {{ amount }} has
+been credited to your account {{ accountNumber }}.
+
+    Amount      : INR {{ amount }}
+    Purpose     : {{ purpose }}
+    Term        : {{ tenureMonths }} months
+    Approved on : {{ approvedAt }}
+    Interest rate   : {{ interestRate }}%
+    Monthly EMI     : INR {{ emiAmount }}
+    First EMI on    : {{ firstEmiDate }}
+    Total repayable : INR {{ totalPayable }}
+    Credited to : {{ accountNumber }}
+    New balance : INR {{ balance }}
+
+The money is already in your balance. The EMI is taken from
+{{ accountNumber }} automatically each month, starting {{ firstEmiDate }}.
+Keep enough in the account on those days: a missed instalment blocks the
+account until it is paid.
+
+Neuron Bank - This is an automated message, please do not reply.

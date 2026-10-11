@@ -1,0 +1,16 @@
+Your deposit has matured
+
+Hi {{ name }}, your {{ depositType }} {{ depositNumber }} matured today and
+INR {{ payoutAmount }} has been credited to your account {{ accountNumber }}.
+
+    Deposit number : {{ depositNumber }}
+    Deposited      : INR {{ principal }}
+    Interest earned: INR {{ interestEarned }}
+    Interest rate  : {{ interestRate }}% ({{ rateLabel }})
+    Held for       : {{ tenure }}
+    Credited       : INR {{ payoutAmount }}
+
+The amount is already in your balance. You can open a new deposit any time from
+the Deposits page.
+
+Neuron Bank - This is an automated message, please do not reply.

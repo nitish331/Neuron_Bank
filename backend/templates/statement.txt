@@ -1,0 +1,14 @@
+Your account statement
+
+Hi {{ name }}, your statement is attached as a PDF.
+
+    Account      : {{ accountNumber }}
+    Period       : {{ period }}
+    Transactions : {{ count }}
+
+This attachment lists your account activity. Do not forward it to anyone you do
+not trust.
+
+You can download a statement any time from the Transactions page.
+
+Neuron Bank - This is an automated message, please do not reply.

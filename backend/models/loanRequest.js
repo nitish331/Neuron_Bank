@@ -42,7 +42,7 @@ const loanRequestSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "approved", "rejected"],
+      enum: ["pending", "approved", "rejected", "repaid"],
       default: "pending",
     },
     approvedBy: {
@@ -56,6 +56,57 @@ const loanRequestSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    // Priced when the customer applies, so the EMI they agreed to never moves.
+    interestRate: {
+      type: Number,
+      min: 0,
+    },
+    rateLabel: {
+      type: String,
+      trim: true,
+    },
+    emiAmount: {
+      type: Number,
+      min: 0,
+    },
+    totalPayable: {
+      type: Number,
+      min: 0,
+    },
+    totalInterest: {
+      type: Number,
+      min: 0,
+    },
+    // Repayment starts the day the loan is approved and paid out.
+    repaymentStartDate: {
+      type: Date,
+    },
+    lastEmiDate: {
+      type: Date,
+    },
+    emisPaid: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    emisMissed: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    amountRepaid: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    // Set while an instalment is overdue, cleared when the arrears are taken.
+    isOverdue: {
+      type: Boolean,
+      default: false,
+    },
+    repaidAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
@@ -63,6 +114,8 @@ const loanRequestSchema = new mongoose.Schema(
 );
 
 loanRequestSchema.index({ status: 1, createdAt: -1 });
+// Drives the sweep that collects instalments.
+loanRequestSchema.index({ status: 1, repaymentStartDate: 1 });
 
 loanRequestSchema.index(
   { user: 1 },

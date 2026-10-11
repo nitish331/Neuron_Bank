@@ -7,6 +7,9 @@ const loanRoutes = require("./loan.route");
 const analyticsRoutes = require("./analytics.route");
 const passwordRoutes = require("./password.route");
 const debitCardRoutes = require("./debitCard.route");
+const beneficiaryRoutes = require("./beneficiary.route");
+const fixedDepositRoutes = require("./fixedDeposit.route");
+const recurringDepositRoutes = require("./recurringDeposit.route");
 
 const router = express.Router();
 
@@ -25,5 +28,8 @@ router.use(loanRoutes);
 router.use(analyticsRoutes);
 router.use(passwordRoutes);
 router.use(debitCardRoutes);
+router.use(beneficiaryRoutes);
+router.use(fixedDepositRoutes);
+router.use(recurringDepositRoutes);
 
 module.exports = router;

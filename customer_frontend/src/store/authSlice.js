@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { deposit, loadTransactions } from './accountSlice';
+import { deposit, loadTransactions, transfer } from './accountSlice';
 import { logout as logoutRequest } from '../services/auth.service';
 import {
   clearSession,
@@ -65,6 +65,12 @@ const authSlice = createSlice({
         if (!state.user) return;
 
         state.user.balance = action.payload.balance;
+        saveSession({ data: state.user });
+      })
+      .addCase(transfer.fulfilled, (state, action) => {
+        if (!state.user) return;
+
+        state.user.balance = action.payload.data.balance;
         saveSession({ data: state.user });
       })
       // The list response carries the current balance too, so a stale figure

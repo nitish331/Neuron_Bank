@@ -26,13 +26,14 @@ function getTransporter() {
   return transporter;
 }
 
-async function sendTemplateEmail({ email, subject, template, values }) {
+async function sendTemplateEmail({ email, subject, template, values, attachments }) {
   await getTransporter().sendMail({
     from: process.env.MAIL_FROM || process.env.SMTP_USER,
     to: email,
     subject,
     text: renderTemplate(`${template}.txt`, values),
     html: renderTemplate(`${template}.html`, values),
+    ...(attachments ? { attachments } : {}),
   });
 }
 
@@ -115,7 +116,144 @@ async function sendCardPinResetEmail(email, name, last4, resetUrl, expiresInMinu
   });
 }
 
+async function sendStatementEmail({
+  email,
+  name,
+  accountNumber,
+  period,
+  count,
+  fileName,
+  pdf,
+}) {
+  await sendTemplateEmail({
+    email,
+    subject: `Your Neuron Bank statement (${period})`,
+    template: "statement",
+    values: { name, accountNumber, period, count },
+    attachments: [{ filename: fileName, content: pdf, contentType: "application/pdf" }],
+  });
+}
+
+async function sendBeneficiaryCodeEmail({
+  email,
+  name,
+  beneficiaryName,
+  accountNumber,
+  action,
+  code,
+  expiresInMinutes,
+}) {
+  await sendTemplateEmail({
+    email,
+    subject: `${code} is your Neuron Bank beneficiary code`,
+    template: "beneficiary-code",
+    values: { name, beneficiaryName, accountNumber, action, code, expiresInMinutes },
+  });
+}
+
+async function sendDepositReminderEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: `Your Neuron Bank deposit ${values.depositNumber} matures in ${values.daysLeft} days`,
+    template: "deposit-reminder",
+    values,
+  });
+}
+
+async function sendDepositMaturedEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: `Your Neuron Bank deposit ${values.depositNumber} has matured`,
+    template: "deposit-matured",
+    values,
+  });
+}
+
+async function sendDepositBookedEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: `Your Neuron Bank deposit ${values.depositNumber} is open`,
+    template: "deposit-booked",
+    values,
+  });
+}
+
+async function sendDepositCloseCodeEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: `${values.code} is your Neuron Bank deposit closure code`,
+    template: "deposit-close-code",
+    values,
+  });
+}
+
+async function sendRecurringDepositBookedEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: `Your Neuron Bank recurring deposit ${values.depositNumber} is open`,
+    template: "rd-booked",
+    values,
+  });
+}
+
+async function sendInstallmentFailedEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: `Instalment missed on your deposit ${values.depositNumber}`,
+    template: "rd-installment-failed",
+    values,
+  });
+}
+
+async function sendLoanApprovedEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: `Your Neuron Bank loan of INR ${values.amount} has been approved`,
+    template: "loan-approved",
+    values,
+  });
+}
+
+async function sendLoanRejectedEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: "An update on your Neuron Bank loan request",
+    template: "loan-rejected",
+    values,
+  });
+}
+
+async function sendLoanEmiMissedEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: "Missed loan instalment: your Neuron Bank account is blocked",
+    template: "loan-emi-missed",
+    values,
+  });
+}
+
+async function sendLoanRepaidEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: "Your Neuron Bank loan is fully repaid",
+    template: "loan-repaid",
+    values,
+  });
+}
+
 module.exports = {
+  sendLoanEmiMissedEmail,
+  sendLoanRepaidEmail,
+  sendLoanApprovedEmail,
+  sendLoanRejectedEmail,
+  sendRecurringDepositBookedEmail,
+  sendInstallmentFailedEmail,
+  sendDepositBookedEmail,
+  sendDepositCloseCodeEmail,
+  sendDepositReminderEmail,
+  sendDepositMaturedEmail,
+  sendBeneficiaryCodeEmail,
+  sendStatementEmail,
   sendRegistrationCodeEmail,
   sendLoginCodeEmail,
   sendAccountPendingEmail,

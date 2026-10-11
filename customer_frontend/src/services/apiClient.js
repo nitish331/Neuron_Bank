@@ -99,9 +99,23 @@ export function refreshSession() {
   return refreshInFlight;
 }
 
+/** Reads the download name the server put on Content-Disposition. */
+function filenameFromDisposition(header) {
+  if (!header) return null;
+
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(header);
+  if (!match) return null;
+
+  try {
+    return decodeURIComponent(match[1]);
+  } catch {
+    return match[1];
+  }
+}
+
 export async function request(
   path,
-  { method = 'GET', body, auth = false, retry = true } = {},
+  { method = 'GET', body, auth = false, retry = true, responseType = 'json' } = {},
 ) {
   const headers = { Accept: 'application/json' };
   if (body !== undefined) headers['Content-Type'] = 'application/json';
@@ -130,27 +144,39 @@ export async function request(
   // account is pending, suspended or rejected, which a new token cannot fix.
   if (response.status === 401 && auth) {
     if (retry && (await refreshSession())) {
-      return request(path, { method, body, auth, retry: false });
+      return request(path, { method, body, auth, responseType, retry: false });
     }
 
     // Refresh failed, or the replay 401'd again — stop rather than loop.
     emitSessionExpired();
   }
 
-  const payload = parseBody(await response.text());
-
+  // A failure is JSON even on a binary endpoint, so read the text either way.
   if (!response.ok) {
+    const payload = parseBody(await response.text());
+
     throw new ApiError(payload?.message || 'Something went wrong', {
       status: response.status,
       fieldErrors: toFieldErrors(payload?.errors),
     });
   }
 
-  return payload;
+  if (responseType === 'blob') {
+    return {
+      blob: await response.blob(),
+      filename: filenameFromDisposition(
+        response.headers.get('Content-Disposition'),
+      ),
+    };
+  }
+
+  return parseBody(await response.text());
 }
 
 export const apiClient = {
   get: (path, options) => request(path, { ...options, method: 'GET' }),
   post: (path, body, options) => request(path, { ...options, method: 'POST', body }),
   patch: (path, body, options) => request(path, { ...options, method: 'PATCH', body }),
+  // Takes a body: the beneficiary delete carries its confirmation code there.
+  delete: (path, body, options) => request(path, { ...options, method: 'DELETE', body }),
 };

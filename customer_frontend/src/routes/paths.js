@@ -25,8 +25,8 @@ export const ROUTES = {
   // Authenticated app. Namespaced so they cannot collide with the marketing
   // routes above, which already own /loans and /cards.
   dashboard: '/dashboard',
-  dashboardAccounts: '/dashboard/accounts',
   dashboardTransactions: '/dashboard/transactions',
+  dashboardBeneficiaries: '/dashboard/beneficiaries',
   dashboardInvestments: '/dashboard/investments',
   dashboardLoans: '/dashboard/loans',
   dashboardCards: '/dashboard/cards',

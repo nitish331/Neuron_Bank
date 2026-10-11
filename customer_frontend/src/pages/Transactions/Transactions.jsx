@@ -6,10 +6,16 @@ import TransactionTable from './sections/TransactionTable';
 import {
   loadPage,
   PAGE_SIZE,
+  selectApplied,
   selectPagination,
   selectStatus,
   selectSummary,
 } from '../../store/transactionsSlice';
+import {
+  downloadStatement,
+  emailStatement,
+} from '../../services/account.service';
+import { ApiError } from '../../services/apiClient';
 import { selectUser } from '../../store/authSlice';
 import { splitAmount } from '../../utils/format';
 import styles from './Transactions.module.css';
@@ -24,8 +30,9 @@ function Transactions() {
   const summary = useSelector(selectSummary);
   const pagination = useSelector(selectPagination);
   const status = useSelector(selectStatus);
-  // Both exports are UI only until their endpoints exist.
-  const [pendingAction, setPendingAction] = useState('');
+  const applied = useSelector(selectApplied);
+
+  const [exportState, setExportState] = useState({ busy: '', notice: '', failed: false });
 
   useEffect(() => {
     dispatch(loadPage({ page: 1 }));
@@ -42,6 +49,48 @@ function Transactions() {
   const isBusy = status === 'pending';
 
   const goToPage = (next) => dispatch(loadPage({ page: next }));
+
+  const describeError = (error) =>
+    error instanceof ApiError
+      ? error.message
+      : 'Something went wrong. Please try again.';
+
+  const handleDownload = async () => {
+    setExportState({ busy: 'pdf', notice: '', failed: false });
+
+    try {
+      const { blob, filename } = await downloadStatement(applied);
+
+      // A blob URL plus a synthetic click is the only way to name a download.
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename || 'neuron-bank-statement.pdf';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+
+      setExportState({ busy: '', notice: 'Your statement has downloaded.', failed: false });
+    } catch (error) {
+      setExportState({ busy: '', notice: describeError(error), failed: true });
+    }
+  };
+
+  const handleEmail = async () => {
+    setExportState({ busy: 'email', notice: '', failed: false });
+
+    try {
+      const response = await emailStatement(applied);
+      setExportState({
+        busy: '',
+        notice: response?.message || 'Statement sent to your email.',
+        failed: false,
+      });
+    } catch (error) {
+      setExportState({ busy: '', notice: describeError(error), failed: true });
+    }
+  };
 
   return (
     <div className={styles.page}>
@@ -84,28 +133,30 @@ function Transactions() {
           <button
             type="button"
             className={styles.exportGhost}
-            onClick={() => setPendingAction('email')}
+            onClick={handleEmail}
+            disabled={Boolean(exportState.busy) || total === 0}
           >
             <Mail size={18} aria-hidden="true" />
-            Send to Email
+            {exportState.busy === 'email' ? 'Sending…' : 'Send to Email'}
           </button>
           <button
             type="button"
             className={styles.exportPrimary}
-            onClick={() => setPendingAction('pdf')}
+            onClick={handleDownload}
+            disabled={Boolean(exportState.busy) || total === 0}
           >
             <Download size={18} aria-hidden="true" />
-            Download as PDF
+            {exportState.busy === 'pdf' ? 'Preparing…' : 'Download as PDF'}
           </button>
         </div>
       </div>
 
-      {pendingAction && (
-        <p className={styles.exportNote} role="status">
-          {pendingAction === 'email'
-            ? 'Emailing a statement is not available yet.'
-            : 'PDF statements are not available yet.'}{' '}
-          This button is waiting on its endpoint.
+      {exportState.notice && (
+        <p
+          className={exportState.failed ? styles.exportError : styles.exportNote}
+          role="status"
+        >
+          {exportState.notice}
         </p>
       )}
 

@@ -57,18 +57,23 @@ function SummaryTiles() {
     },
     {
       id: 'investments',
-      label: 'Investments',
+      label: 'Invested',
       amount: investments?.total ?? 0,
-      period: 'Portfolio value',
+      // Maturity value is the payoff, so it earns the line over a static label.
+      period: investments?.count
+        ? `${plural(investments.count, 'deposit')} → ${formatCurrency(investments.maturityValue)}`
+        : 'No active deposits',
       tone: 'neutral',
       icon: ChartNoAxesColumn,
       // The server names the figures it cannot back yet.
       isPlaceholder: placeholders.includes('investments'),
     },
     {
+      // `total` is the amount borrowed and never falls; `outstanding` is the
+      // debt that actually remains after each EMI is collected.
       id: 'loans',
-      label: 'Active Loans',
-      amount: loans?.total ?? 0,
+      label: 'Loan Outstanding',
+      amount: loans?.outstanding ?? 0,
       period: loans?.pendingCount
         ? `${plural(loans.activeCount, 'active loan')}, ${loans.pendingCount} pending`
         : plural(loans?.activeCount ?? 0, 'active loan'),

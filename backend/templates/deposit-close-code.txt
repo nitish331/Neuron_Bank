@@ -1,0 +1,20 @@
+Confirm closing your deposit
+
+Hi {{ name }}, use the code below to close your {{ depositType }}
+{{ depositNumber }} before it matures.
+
+    {{ code }}
+
+    Value today                    : INR {{ grossAmount }}
+    Early closure charge ({{ penaltyPercent }}%) : INR {{ penaltyAmount }}
+    You would receive              : INR {{ payoutAmount }}
+
+Leaving it until {{ maturityDate }} would pay INR {{ maturityAmount }}, which
+is INR {{ amountGivenUp }} more than closing now.
+
+If this was not you, do not share this code and check your account straight
+away.
+
+This code expires in {{ expiresInMinutes }} minutes.
+
+Neuron Bank - This is an automated message, please do not reply.
