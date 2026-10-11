@@ -2,11 +2,22 @@ const mongoose = require("mongoose");
 const Account = require("../models/account");
 const User = require("../models/user");
 const LoanRequest = require("../models/loanRequest");
+const FixedDeposit = require("../models/fixedDeposit");
+const RecurringDeposit = require("../models/recurringDeposit");
+const DebitCard = require("../models/debitCard");
 const Transaction = require("../models/transaction");
 const { createHttpError } = require("../utils/authUtils");
 const { roundMoney, generateReference } = require("../utils/transactionUtils");
 const { emiDueDate } = require("../utils/loanMath");
-const { sendLoanApprovedEmail, sendLoanRejectedEmail } = require("../utils/mailer");
+const {
+  sendLoanApprovedEmail,
+  sendLoanRejectedEmail,
+  sendAccountRejectedEmail,
+  sendAccountApprovedEmail,
+  sendAccountSuspendedEmail,
+  sendAccountReactivatedEmail,
+  sendAccountClosedEmail,
+} = require("../utils/mailer");
 
 function money(value) {
   return Number(value || 0).toLocaleString("en-IN", {
@@ -93,6 +104,18 @@ async function approveAccount(req, res, next) {
       }
     });
 
+    try {
+      await sendAccountApprovedEmail(owner.email, {
+        name: owner.name,
+        accountNumber: approvedAccount.accountNumber,
+        currency: approvedAccount.currency,
+        balance: money(approvedAccount.balance),
+        approvedAt: longDate(approvedAccount.approvedAt),
+      });
+    } catch (error) {
+      console.error("Account approved email failed:", error.message);
+    }
+
     return res.status(200).json({
       success: true,
       message: "account approved successfully",
@@ -118,6 +141,416 @@ async function approveAccount(req, res, next) {
   }
 }
 
+function publicAccount(account, owner) {
+  return {
+    id: account._id,
+    accountNumber: account.accountNumber,
+    status: account.status,
+    balance: account.balance,
+    currency: account.currency,
+    approvedBy: account.approvedBy ?? null,
+    approvedAt: account.approvedAt ?? null,
+    rejectionReason: account.rejectionReason ?? null,
+    openedAt: account.createdAt,
+    owner: owner
+      ? {
+          id: owner._id,
+          name: owner.name,
+          email: owner.email,
+          phoneNumber: owner.phoneNumber,
+          status: owner.status,
+          dateOfBirth: owner.dateOfBirth,
+          emailVerifiedAt: owner.emailVerifiedAt ?? null,
+          joinedAt: owner.createdAt,
+        }
+      : null,
+  };
+}
+
+async function listAccounts(req, res, next) {
+  try {
+    const status = req.query.status || "pending";
+    const page = Number.parseInt(req.query.page, 10) || 1;
+    const limit = Number.parseInt(req.query.limit, 10) || 20;
+
+    const filter = status === "all" ? {} : { status };
+
+    // Oldest first, so the queue is worked in the order people applied.
+    const [accounts, total, counts] = await Promise.all([
+      Account.find(filter)
+        .sort({ createdAt: 1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("user", "name email phoneNumber status dateOfBirth emailVerifiedAt createdAt")
+        .lean(),
+      Account.countDocuments(filter),
+      Account.aggregate([{ $group: { _id: "$status", count: { $sum: 1 } } }]),
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      message: "accounts fetched successfully",
+      data: {
+        accounts: accounts.map((account) =>
+          publicAccount(account, account.user),
+        ),
+        // Every status at a glance, so the queue tabs can show their counts.
+        statusCounts: counts.reduce(
+          (acc, row) => ({ ...acc, [row._id]: row.count }),
+          { pending: 0, active: 0, rejected: 0, closed: 0, blocked: 0 },
+        ),
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+          hasMore: page * limit < total,
+        },
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+async function rejectAccount(req, res, next) {
+  let session;
+
+  try {
+    session = await mongoose.startSession();
+    const reason = req.body.reason.trim();
+    let rejectedAccount;
+    let owner;
+
+    await session.withTransaction(async () => {
+      const account = await Account.findById(req.params.accountId).session(session);
+
+      if (!account) {
+        throw createHttpError(404, "Account not found");
+      }
+
+      // Only a request awaiting review can be turned down.
+      if (account.status !== "pending") {
+        throw createHttpError(
+          409,
+          `Account is already ${account.status} and cannot be rejected`,
+        );
+      }
+
+      owner = await User.findById(account.user).session(session);
+
+      if (!owner) {
+        throw createHttpError(404, "The owner of this account no longer exists");
+      }
+
+      account.status = "rejected";
+      account.rejectionReason = reason;
+      account.approvedBy = req.user._id;
+      account.approvedAt = new Date();
+      rejectedAccount = await account.save({ session });
+
+      // One account per customer, so turning it down turns the person away.
+      if (owner.status === "pending") {
+        owner.status = "rejected";
+        await owner.save({ session });
+      }
+    });
+
+    try {
+      await sendAccountRejectedEmail(owner.email, {
+        name: owner.name,
+        accountNumber: rejectedAccount.accountNumber,
+        decidedAt: longDate(rejectedAccount.approvedAt),
+        reason,
+      });
+    } catch (error) {
+      console.error("Account rejected email failed:", error.message);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "account request rejected",
+      data: { account: publicAccount(rejectedAccount, owner) },
+    });
+  } catch (error) {
+    return next(error);
+  } finally {
+    if (session) {
+      await session.endSession();
+    }
+  }
+}
+
+async function listCustomers(req, res, next) {
+  try {
+    const page = Number.parseInt(req.query.page, 10) || 1;
+    const limit = Number.parseInt(req.query.limit, 10) || 20;
+    const { status, search } = req.query;
+
+    const filter = { role: "customer" };
+
+    if (status) {
+      filter.status = status;
+    }
+
+    if (search) {
+      // Escaped, so a stray bracket in the box cannot break the query.
+      const safe = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const pattern = new RegExp(safe, "i");
+
+      filter.$or = [
+        { name: pattern },
+        { email: pattern },
+        { phoneNumber: pattern },
+      ];
+    }
+
+    const [customers, total] = await Promise.all([
+      User.find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .select("name email phoneNumber status dateOfBirth emailVerifiedAt createdAt")
+        .lean(),
+      User.countDocuments(filter),
+    ]);
+
+    // One extra query for the whole page rather than one per customer.
+    const accounts = await Account.find({
+      user: { $in: customers.map((customer) => customer._id) },
+    })
+      .select("user accountNumber status balance currency")
+      .lean();
+
+    const byUser = new Map(
+      accounts.map((account) => [String(account.user), account]),
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "customers fetched successfully",
+      data: {
+        customers: customers.map((customer) => {
+          const account = byUser.get(String(customer._id));
+
+          return {
+            id: customer._id,
+            name: customer.name,
+            email: customer.email,
+            phoneNumber: customer.phoneNumber,
+            status: customer.status,
+            dateOfBirth: customer.dateOfBirth,
+            emailVerifiedAt: customer.emailVerifiedAt ?? null,
+            joinedAt: customer.createdAt,
+            account: account
+              ? {
+                  id: account._id,
+                  accountNumber: account.accountNumber,
+                  status: account.status,
+                  balance: account.balance,
+                  currency: account.currency,
+                }
+              : null,
+          };
+        }),
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+          hasMore: page * limit < total,
+        },
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+async function setCustomerStatus(req, res, next) {
+  try {
+    const { status } = req.body;
+    const reason = req.body.reason?.trim();
+
+    const customer = await User.findById(req.params.userId).select(
+      "+refreshTokenHash +refreshTokenExpiresAt",
+    );
+
+    if (!customer) {
+      throw createHttpError(404, "Customer not found");
+    }
+
+    // Staff accounts are not managed from the customer screens.
+    if (customer.role !== "customer") {
+      throw createHttpError(422, "Only customer accounts can be suspended");
+    }
+
+    if (customer.status === status) {
+      throw createHttpError(409, `This customer is already ${status}`);
+    }
+
+    if (status === "suspended" && customer.status !== "active") {
+      throw createHttpError(
+        409,
+        `Only an active customer can be suspended, this one is ${customer.status}`,
+      );
+    }
+
+    if (status === "active" && customer.status !== "suspended") {
+      throw createHttpError(
+        409,
+        `Only a suspended customer can be reactivated, this one is ${customer.status}`,
+      );
+    }
+
+    customer.status = status;
+
+    if (status === "suspended") {
+      // Ends every session, so the suspension bites immediately.
+      customer.refreshTokenHash = undefined;
+      customer.refreshTokenExpiresAt = undefined;
+    }
+
+    await customer.save();
+
+    const account = await Account.findOne({ user: customer._id })
+      .select("accountNumber")
+      .lean();
+
+    const values = {
+      name: customer.name,
+      accountNumber: account?.accountNumber ?? "your account",
+      decidedAt: longDate(new Date()),
+      reason,
+    };
+
+    try {
+      if (status === "suspended") {
+        await sendAccountSuspendedEmail(customer.email, values);
+      } else {
+        await sendAccountReactivatedEmail(customer.email, values);
+      }
+    } catch (error) {
+      console.error("Customer status email failed:", error.message);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message:
+        status === "suspended"
+          ? "customer suspended successfully"
+          : "customer reactivated successfully",
+      data: {
+        id: customer._id,
+        name: customer.name,
+        email: customer.email,
+        status: customer.status,
+        accountNumber: account?.accountNumber ?? null,
+        reason: reason ?? null,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+// Nothing may be left behind an account that is about to be shut.
+async function assertNothingOutstanding(account) {
+  if (account.balance > 0) {
+    throw createHttpError(
+      422,
+      `This account still holds INR ${money(account.balance)}. Empty it before closing`,
+    );
+  }
+
+  const [fixedDeposits, recurringDeposits, loans] = await Promise.all([
+    FixedDeposit.countDocuments({ account: account._id, status: "active" }),
+    RecurringDeposit.countDocuments({ account: account._id, status: "active" }),
+    LoanRequest.countDocuments({
+      account: account._id,
+      status: { $in: ["pending", "approved"] },
+    }),
+  ]);
+
+  if (fixedDeposits || recurringDeposits) {
+    throw createHttpError(
+      422,
+      `This account has ${fixedDeposits + recurringDeposits} running deposit(s). Close them before closing the account`,
+    );
+  }
+
+  if (loans) {
+    throw createHttpError(
+      422,
+      `This account has ${loans} loan(s) still open. Settle them before closing the account`,
+    );
+  }
+}
+
+async function closeAccount(req, res, next) {
+  try {
+    const reason = req.body.reason.trim();
+    const account = await Account.findById(req.params.accountId);
+
+    if (!account) {
+      throw createHttpError(404, "Account not found");
+    }
+
+    if (account.status === "closed") {
+      throw createHttpError(409, "This account is already closed");
+    }
+
+    if (account.status === "pending" || account.status === "rejected") {
+      throw createHttpError(
+        409,
+        `An account that is ${account.status} cannot be closed, decide the application instead`,
+      );
+    }
+
+    await assertNothingOutstanding(account);
+
+    const owner = await User.findById(account.user).select("name email").lean();
+    const closingBalance = roundMoney(account.balance);
+
+    account.status = "closed";
+    account.rejectionReason = reason;
+    account.approvedBy = req.user._id;
+    account.approvedAt = new Date();
+    await account.save();
+
+    // A card on a shut account can never work again.
+    const cards = await DebitCard.updateMany(
+      { account: account._id, status: { $in: ["active", "frozen"] } },
+      { status: "blocked" },
+    );
+
+    if (owner) {
+      try {
+        await sendAccountClosedEmail(owner.email, {
+          name: owner.name,
+          accountNumber: account.accountNumber,
+          decidedAt: longDate(account.approvedAt),
+          balance: money(closingBalance),
+          reason,
+        });
+      } catch (error) {
+        console.error("Account closed email failed:", error.message);
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "account closed successfully",
+      data: {
+        account: publicAccount(account, owner),
+        cardsBlocked: cards.modifiedCount,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
 async function listLoanRequests(req, res, next) {
   try {
     const status = req.query.status || "pending";
@@ -128,7 +561,7 @@ async function listLoanRequests(req, res, next) {
 
     // The { status, createdAt } index covers this, oldest first so the queue
     // is worked in the order people applied.
-    const [requests, total] = await Promise.all([
+    const [requests, total, counts] = await Promise.all([
       LoanRequest.find(filter)
         .sort({ createdAt: 1 })
         .skip((page - 1) * limit)
@@ -137,6 +570,8 @@ async function listLoanRequests(req, res, next) {
         .populate("account", "accountNumber status balance")
         .lean(),
       LoanRequest.countDocuments(filter),
+      // Every status at a glance, so the queue tabs can show their counts.
+      LoanRequest.aggregate([{ $group: { _id: "$status", count: { $sum: 1 } } }]),
     ]);
 
     return res.status(200).json({
@@ -162,6 +597,10 @@ async function listLoanRequests(req, res, next) {
               }
             : null,
         })),
+        statusCounts: counts.reduce(
+          (acc, row) => ({ ...acc, [row._id]: row.count }),
+          { pending: 0, approved: 0, rejected: 0, repaid: 0 },
+        ),
         pagination: {
           page,
           limit,
@@ -365,6 +804,11 @@ async function rejectLoanRequest(req, res, next) {
 
 module.exports = {
   approveAccount,
+  listAccounts,
+  rejectAccount,
+  listCustomers,
+  setCustomerStatus,
+  closeAccount,
   listLoanRequests,
   approveLoanRequest,
   rejectLoanRequest,

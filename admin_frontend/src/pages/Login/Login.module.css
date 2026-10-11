@@ -1,0 +1,262 @@
+.login {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: clamp(var(--space-5), 4vh, var(--space-8)) var(--container-gutter);
+  background-color: var(--surface-base);
+}
+
+/* The artwork sits on the left of the plate, which is where the pitch goes. */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(
+      100deg,
+      rgba(4, 6, 24, 0.55) 0%,
+      rgba(4, 6, 24, 0.7) 48%,
+      rgba(4, 6, 24, 0.92) 100%
+    ),
+    url('../../assets/images/admin-login-bg.png');
+  background-size: cover;
+  background-position: center left;
+  background-repeat: no-repeat;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: clamp(var(--space-6), 5vw, var(--space-9));
+  width: 100%;
+  max-width: var(--container-max);
+}
+
+/* ---------- Left pitch ---------- */
+.pitch {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.eyebrow {
+  margin-top: var(--space-5);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.headline {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: var(--weight-extrabold);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.accentPink {
+  color: #d946ef;
+}
+
+.accentBlue {
+  color: #818cf8;
+}
+
+.pitchText {
+  max-width: 30rem;
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+  line-height: 1.7;
+}
+
+/* ---------- Login card ---------- */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(var(--space-4), 2.4vh, var(--space-5));
+  width: min(100%, 30rem);
+  justify-self: end;
+  padding: clamp(var(--space-5), 3.4vh, var(--space-7));
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-default);
+  background: linear-gradient(180deg, rgba(18, 20, 46, 0.78) 0%, rgba(8, 9, 22, 0.86) 100%);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: var(--shadow-lg);
+}
+
+.cardLogo {
+  margin-inline: auto;
+}
+
+.cardHead {
+  text-align: center;
+}
+
+.cardHead h2 {
+  font-size: clamp(var(--text-2xl), 3vw, var(--text-3xl));
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.cardHead p {
+  margin-top: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+.notice {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  background: rgba(139, 92, 246, 0.12);
+  color: #c4b5fd;
+  font-size: var(--text-sm);
+}
+
+.formError {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.1);
+  color: #fca5a5;
+  font-size: var(--text-sm);
+}
+
+/* ---------- Form ---------- */
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(var(--space-3), 1.8vh, var(--space-4));
+}
+
+/* The reset link shares the row with the field's own label. */
+.loginFormPassword {
+  position: relative;
+}
+
+.loginFormForgot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: var(--brand-violet);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.loginFormForgot:hover {
+  text-decoration: underline;
+}
+
+.loginFormNote {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+}
+
+.loginFormSubmit {
+  width: 100%;
+  margin-top: var(--space-2);
+}
+
+.loginFormActions {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3);
+}
+
+/* ---------- Verify step ---------- */
+.loginVerify {
+  text-align: center;
+}
+
+.loginVerifyBadge {
+  display: inline-grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: var(--space-4);
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.16);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  color: var(--brand-violet);
+  font-size: 1.6rem;
+}
+
+.loginVerifyTitle {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+}
+
+.loginVerifyText {
+  margin-top: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.loginVerifyText strong {
+  color: var(--text-primary);
+}
+
+/* Wide tracking so the code reads as discrete digits. */
+.loginVerifyInput {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  letter-spacing: 0.6em;
+  text-indent: 0.6em;
+}
+
+.loginVerifyResend {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+.loginVerifyResend button {
+  color: var(--brand-violet);
+  font: inherit;
+  font-weight: var(--weight-medium);
+}
+
+.loginVerifyResend button:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.loginVerifyResend button:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 980px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: var(--space-6);
+  }
+
+  /* The form leads on narrow screens; the pitch copy follows it. */
+  .pitch {
+    order: 2;
+    align-items: center;
+    text-align: center;
+  }
+
+  .card {
+    justify-self: center;
+  }
+
+  .backdrop {
+    background-position: center;
+  }
+}

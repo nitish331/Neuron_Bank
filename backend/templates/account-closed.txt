@@ -1,0 +1,15 @@
+Your account has been closed
+
+Hi {{ name }}, your Neuron Bank account {{ accountNumber }} has been closed and
+can no longer be used.
+
+    Account   : {{ accountNumber }}
+    Closed on : {{ decidedAt }}
+    Balance at closure : INR {{ balance }}
+
+Reason: {{ reason }}
+
+Any debit card on this account has been blocked. Your transaction history
+stays available if you need a statement for your records.
+
+Neuron Bank - This is an automated message, please do not reply.

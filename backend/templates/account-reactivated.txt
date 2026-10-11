@@ -1,0 +1,12 @@
+Your account is active again
+
+Hi {{ name }}, the suspension on your Neuron Bank account has been lifted and
+you can sign in as usual.
+
+    Account       : {{ accountNumber }}
+    Reactivated on: {{ decidedAt }}
+
+Everything is where you left it: your balance, cards, deposits and saved
+beneficiaries are unchanged.
+
+Neuron Bank - This is an automated message, please do not reply.

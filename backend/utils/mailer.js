@@ -241,7 +241,57 @@ async function sendLoanRepaidEmail(email, values) {
   });
 }
 
+async function sendAccountRejectedEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: "About your Neuron Bank account application",
+    template: "account-rejected",
+    values,
+  });
+}
+
+async function sendAccountApprovedEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: "Your Neuron Bank account is open",
+    template: "account-approved",
+    values,
+  });
+}
+
+async function sendAccountSuspendedEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: "Your Neuron Bank account has been suspended",
+    template: "account-suspended",
+    values,
+  });
+}
+
+async function sendAccountReactivatedEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: "Your Neuron Bank account is active again",
+    template: "account-reactivated",
+    values,
+  });
+}
+
+async function sendAccountClosedEmail(email, values) {
+  await sendTemplateEmail({
+    email,
+    subject: "Your Neuron Bank account has been closed",
+    template: "account-closed",
+    values,
+  });
+}
+
 module.exports = {
+  sendAccountSuspendedEmail,
+  sendAccountReactivatedEmail,
+  sendAccountClosedEmail,
+  sendAccountApprovedEmail,
+  sendAccountRejectedEmail,
   sendLoanEmiMissedEmail,
   sendLoanRepaidEmail,
   sendLoanApprovedEmail,

@@ -1,0 +1,14 @@
+Your account has been suspended
+
+Hi {{ name }}, access to your Neuron Bank account has been suspended by our
+team. You will not be able to sign in or move money while this is in place.
+
+    Account       : {{ accountNumber }}
+    Suspended on  : {{ decidedAt }}
+
+Reason: {{ reason }}
+
+Your money is safe and nothing has been taken. If you believe this is a
+mistake, reply to the team who contacted you and we will review it.
+
+Neuron Bank - This is an automated message, please do not reply.
